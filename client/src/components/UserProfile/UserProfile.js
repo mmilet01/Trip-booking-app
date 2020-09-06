@@ -7,7 +7,6 @@ import { TripCard } from "../Main/TripCard/TripCard";
 
 const UserProfile = (props) => {
   console.log(props);
-  // const [Loading, setLoading] = useState(true);
   const isFetching = useSelector((state) => state.tripReducer.isFetching);
   const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
   const user = useSelector((state) => state.userReducer.user);
@@ -28,8 +27,11 @@ const UserProfile = (props) => {
     };
   }, fetchedUser);
 
-  console.log("BEFORE IF", isLoggedIn);
-  if (!isLoggedIn && !isFetching) {
+  if (isFetching && !isLoggedIn) {
+    return <div>LOADING COMPONENT</div>;
+  }
+
+  if (!isFetching && !isLoggedIn) {
     return (
       <Redirect
         to={{
@@ -38,7 +40,8 @@ const UserProfile = (props) => {
         }}
       />
     );
-  } else if (isLoggedIn && user.id === userID && !isFetching) {
+  }
+  if (isLoggedIn && !isFetching && user.id === userID) {
     return (
       <Redirect
         to={{
@@ -52,6 +55,7 @@ const UserProfile = (props) => {
   let filteredTrips = [];
   // instead of filtering user trips like this -> since with large amount of data it is bad, we
   // make an endpoint for certain user trips at backend and fetch them that way
+  // and then we dont have filtered trips but only trips inside this component
   if (isLoggedIn && !isFetching) {
     filteredTrips = trips
       .filter((trip) => {
@@ -70,7 +74,7 @@ const UserProfile = (props) => {
   }
   console.log("lol2", fetchedUser);
 
-  let fetchedUserTrips = <div>Loading comp or sth component</div>;
+  let fetchedUserTrips = <div>WHY IS THIS SHOWN</div>;
   if (!!fetchedUser && !isFetching) {
     fetchedUserTrips = (
       <div className="profilInfo">

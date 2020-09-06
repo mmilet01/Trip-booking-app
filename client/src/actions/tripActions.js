@@ -166,6 +166,15 @@ const addTokenToHeaders = () => {
   return config;
 };
 
+axios.interceptors.request.use((req) => {
+  console.log("INTERCEPTING???????");
+  console.log(req);
+  // `req` is the Axios request config, so you can modify
+  // the `headers`.
+  /*   req.headers.authorization = "my secret token";
+   */ return req;
+});
+
 /* 
 export const fetchUserTrips = id => dispatch => {
   axios
