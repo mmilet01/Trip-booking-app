@@ -53,9 +53,6 @@ export class Login extends Component {
   componentDidMount() {
     this.props.clearningErrors();
   }
-  componentWillMount() {
-    console.log("WILLMOUNT LOGINJS", this.props.isLoggedIn);
-  }
 
   formSubmit(e) {
     e.preventDefault();
@@ -74,11 +71,7 @@ export class Login extends Component {
   }
   render() {
     if (this.props.history.action === "REPLACE" && this.props.isLoggedIn) {
-      console.log("inside if");
       let path = this.props.location.state.from;
-      console.log("INSIDE IF  WTF", this.props);
-
-      console.log("redirect to ", path);
       return <Redirect to={path} />;
     } else if (this.props.isLoggedIn) {
       return <Redirect to="/profile" />;

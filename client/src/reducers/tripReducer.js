@@ -1,41 +1,39 @@
 import {
-  FETCH_TRIPS,
-  FETCH_SINGLE_TRIP,
+  TRIPS_FETCHED_SUCCESSFULLY,
+  SINGLE_TRIP_FETCHED_SUCCESSFULLY,
   DELETE_TRIP,
   EDIT_TRIP,
   CLEAR_TRIP,
   ADD_COMMENT,
   ADD_LIKE,
   REMOVE_LIKE,
-  START_FETCHING,
+  FETCHING_USER_TRIPS_SUCCESSFULLY,
 } from "../constants/actions";
 
 const initialState = {
   trips: [],
   trip: {},
   comments: [],
-  isFetching: true,
+  user_trips: [],
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case START_FETCHING:
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case FETCH_TRIPS:
+    case TRIPS_FETCHED_SUCCESSFULLY:
       return {
         ...state,
         trips: action.payload,
-        isFetching: false,
       };
-    case FETCH_SINGLE_TRIP:
+    case FETCHING_USER_TRIPS_SUCCESSFULLY:
+      return {
+        ...state,
+        user_trips: action.payload,
+      };
+    case SINGLE_TRIP_FETCHED_SUCCESSFULLY:
       return {
         ...state,
         trip: action.payload,
         comments: action.payload.comments,
-        isFetching: false,
       };
     case DELETE_TRIP:
       return {

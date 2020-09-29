@@ -1,29 +1,39 @@
 import {
-  FETCH_TRIPS,
-  FETCH_SINGLE_TRIP,
-  FETCH_USER_TRIPS,
-  DELETE_TRIP,
-  EDIT_TRIP,
+  FETCHING_USER_TRIPS_SUCCESSFULLY,
   CLEAR_TRIP,
-  ADD_COMMENT,
   ADD_LIKE,
-  REMOVE_LIKE,
-  START_FETCHING,
+  TRIP_EDITED_SUCCESSFULLY,
+  LOAD_SINGLE_TRIP,
+  EDITING_TRIP,
+  LOADING_SINGLE_TRIP_FAILED,
+  LOAD_TRIPS,
+  LOADING_TRIPS_FAILED,
+  TRIP_CREATION_FAILED,
+  SINGLE_TRIP_FETCHED_SUCCESSFULLY,
+  TRIPS_FETCHED_SUCCESSFULLY,
+  LOAD_USER_TRIPS_FAILED,
+  LOAD_USER_TRIPS,
+  TRIP_CREATED_SUCCESSFULLY,
+  CREATING_TRIP,
 } from "../constants/actions";
 import axios from "axios";
 
 export const fetchTrips = () => (dispatch) => {
-  dispatch({ type: START_FETCHING });
+  dispatch({ type: LOAD_TRIPS });
   axios
     .get("/api/trips")
     .then((res) => {
-      console.log("TRIPS FETCHED");
       dispatch({
-        type: FETCH_TRIPS,
+        type: TRIPS_FETCHED_SUCCESSFULLY,
         payload: res.data,
       });
     })
-    .catch((err) => console.log("ERROR", err));
+    .catch((err) => {
+      console.log("TRIPS FETCHED FAILED", err);
+      dispatch({
+        type: LOADING_TRIPS_FAILED,
+      });
+    });
 };
 
 export const fetchSingleTrip = (id) => (dispatch, getState) => {
@@ -31,57 +41,69 @@ export const fetchSingleTrip = (id) => (dispatch, getState) => {
   console.log(getState().tripReducer.trips);
   problem ako korisnik bez loadanja svih tripiova dode samo na jedan koji ima bookmarkan->nece mu ga pokazat
   */
-  dispatch({ type: START_FETCHING });
-
+  dispatch({ type: LOAD_SINGLE_TRIP });
   axios
     .get("/api/trips/show/" + id)
     .then((res) => {
       dispatch({
-        type: FETCH_SINGLE_TRIP,
+        type: SINGLE_TRIP_FETCHED_SUCCESSFULLY,
         payload: res.data,
       });
     })
-    .catch((err) => console.log("Ups, something went wrong", err));
+    .catch((err) => {
+      console.log("FETCHING SINGLE TRIP FAILED", err);
+      dispatch({
+        type: LOADING_SINGLE_TRIP_FAILED,
+      });
+    });
 };
 
 export const createTrip = (data, history) => {
-  const config = addTokenToHeaders();
+  dispatch({ type: CREATING_TRIP });
   axios
-    .post("/api/trips", data, config)
+    .post("/api/trips", data)
     .then((res) => {
+      dispatch({ type: TRIP_CREATED_SUCCESSFULLY });
       history.push("/trips");
     })
     .catch((err) => {
+      dispatch({ type: TRIP_CREATION_FAILED });
       console.log("Error", err);
     });
 };
 
 export const editTrip = (data, id, history) => (dispatch) => {
+  dispatch({ type: EDITING_TRIP });
   axios
     .put("/api/trips/edit/" + id, data)
     .then((res) => {
       dispatch({
-        type: EDIT_TRIP,
+        type: TRIP_EDITED_SUCCESSFULLY,
         payload: data,
       });
       history.push("/trip/" + id);
     })
     .catch((err) => {
-      console.log("Error", err);
+      dispatch({
+        type: TRIP_EDITING_FAILED,
+      });
     });
 };
 
 export const deleteTrip = (id, history) => (dispatch) => {
+  dispatch({ type: DELETING_TRIP });
   axios
     .delete("/api/trips/delete/" + id)
     .then((res) => {
       dispatch({
-        type: DELETE_TRIP,
+        type: TRIP_DELETED_SUCCESSFULLY,
         payload: id,
       });
       history.push("/profile");
     })
-    .catch((err) => console.log("Ups, something went wrong", err));
+    .catch((err) => {
+      dispatch({ type: TRIP_DELETING_FAILED });
+    });
 };
 
 export const clearTrip = () => (dispatch) => {
@@ -91,55 +113,46 @@ export const clearTrip = () => (dispatch) => {
 };
 
 export const addComment = (id, comment) => (dispatch) => {
-  const config = addTokenToHeaders();
+  dispatch({ type: POSTING_COMMENT });
   axios
-    .post(
-      "/api/trips/comment/" + id,
-      {
-        comment,
-      },
-      config
-    )
+    .post("/api/trips/comment/" + id, {
+      comment,
+    })
     .then((res) => {
-      console.log(res.data);
       dispatch({
-        type: ADD_COMMENT,
+        type: COMMENT_POSTED_SUCCESSFULLY,
         payload: res.data.comment,
       });
     })
     .catch((err) => {
-      console.log("Error in COMMENTING", err);
+      dispatch({ type: POSTING_COMMENT_FAILED });
     });
 };
 
 export const addLike = (id) => (dispatch, getState) => {
-  const config = addTokenToHeaders();
+  dispatch({ type: ADDING_LIKE });
   axios
-    .post("/api/trips/like/" + id, null, config)
+    .post("/api/trips/like/" + id, null)
     .then((res) => {
-      console.log("LIKING RES", res.data.trip);
-      console.log(getState().tripReducer.trips);
       let newTrips = getState().tripReducer.trips.map((trip) => {
         if (trip.id == res.data.trip.id) {
           trip = res.data.trip;
         }
         return trip;
       });
-      console.log(newTrips);
       dispatch({
-        type: ADD_LIKE,
+        type: LIKE_ADDED_SUCCESSFULLY,
         payload: newTrips,
       });
     })
     .catch((err) => {
-      console.log("Error in LIKING", err);
+      dispatch({ ADDING_LIKE_FAILED });
     });
 };
 
 export const removeLike = (id) => (dispatch, getState) => {
-  const config = addTokenToHeaders();
   axios
-    .post("/api/trips/unlike/" + id, null, config)
+    .post("/api/trips/unlike/" + id, null)
     .then((res) => {
       let newTrips = getState().tripReducer.trips.map((trip) => {
         if (trip.id == res.data.trip.id) {
@@ -157,35 +170,22 @@ export const removeLike = (id) => (dispatch, getState) => {
     });
 };
 
-const addTokenToHeaders = () => {
-  const config = {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  };
-  return config;
-};
-
-axios.interceptors.request.use((req) => {
-  console.log("INTERCEPTING???????");
-  console.log(req);
-  // `req` is the Axios request config, so you can modify
-  // the `headers`.
-  /*   req.headers.authorization = "my secret token";
-   */ return req;
-});
-
-/* 
-export const fetchUserTrips = id => dispatch => {
+export const fetchUserTrips = (id) => (dispatch) => {
+  dispatch({
+    type: LOAD_USER_TRIPS,
+  });
   axios
     .get("/api/trips/userTrips/" + id)
-    .then(res => {
+    .then((res) => {
       dispatch({
-        type: FETCH_USER_TRIPS,
-        payload: res.data
+        type: FETCHING_USER_TRIPS_SUCCESSFULLY,
+        payload: res.data,
       });
     })
-    .catch(err =>
-      console.log("Ups, something went wrong with fetching user trips", err)
-    );
-}; */
+    .catch((err) => {
+      dispatch({
+        type: LOAD_USER_TRIPS_FAILED,
+      });
+      console.log("Ups, something went wrong with fetching user trips", err);
+    });
+};

@@ -20,14 +20,8 @@ import { userLoaded } from "./actions/userActions";
 
 class App extends Component {
   componentWillMount() {
-    console.log("will mount");
     store.dispatch(userLoaded());
   }
-  /* componentDidMount() {
-    store.dispatch(userLoaded());
-
-    console.log("app MOUNTED");
-  } */
   render() {
     return (
       <Router>

@@ -9,18 +9,16 @@ import {
   CLEAR_ERRORS,
   FETCH_USER,
   CLEAR_USER,
+  LOADING_CURRENT_USER,
 } from "../constants/actions";
 import axios from "axios";
 
 export const userLoaded = () => (dispatch) => {
-  let config = {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  };
-
+  dispatch({
+    type: LOADING_CURRENT_USER,
+  });
   axios
-    .get("/api/users/", config)
+    .get("/api/users/")
     .then((res) => {
       dispatch({
         type: USER_LOADED,
@@ -28,7 +26,6 @@ export const userLoaded = () => (dispatch) => {
       });
     })
     .catch((err) => {
-      console.log("Failure", err);
       if (err.response) {
         localStorage.removeItem("token");
       }
@@ -83,12 +80,9 @@ export const userRegister = (body) => (dispatch) => {
 };
 
 export const fetchUser = (id) => (dispatch) => {
-  console.log("FETCH USER ID", id);
-  //fetchedUser - fetchat info za usera na kojeg kliknemo - u komponent willl unmount ovo moramo Clear-at
   axios
     .get("/api/users/user/" + id)
     .then((res) => {
-      console.log(res.data.user);
       dispatch({
         type: FETCH_USER,
         payload: res.data.user,

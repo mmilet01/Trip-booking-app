@@ -13,11 +13,11 @@ export class TripCard extends Component {
       likes: [],
       liked:
         this.props.user !== null
-          ? this.props.trip.likes.find(name => {
+          ? this.props.trip.likes.find((name) => {
               console.log(name.userName, this.props.user.fullname);
               return name.userName === this.props.user.fullname;
             })
-          : false
+          : false,
     };
     this.liked = this.liked.bind(this);
     this.unliked = this.unliked.bind(this);
@@ -29,7 +29,7 @@ export class TripCard extends Component {
     this.setState({
       ...this.state,
       likes: [...this.state.likes, { userName: this.props.user.fullname }],
-      liked: !this.state.liked
+      liked: !this.state.liked,
     });
   }
 
@@ -37,17 +37,17 @@ export class TripCard extends Component {
     this.props.removeLike(this.props.trip.id);
     this.setState({
       ...this.state,
-      likes: this.state.likes.filter(likedBy => {
+      likes: this.state.likes.filter((likedBy) => {
         return likedBy.userName != this.props.user.fullname;
       }),
-      liked: !this.state.liked
+      liked: !this.state.liked,
     });
   }
 
   handleClose() {
     this.setState({
       ...this.state,
-      show: !this.state.show
+      show: !this.state.show,
     });
   }
   componentDidMount() {
@@ -55,7 +55,7 @@ export class TripCard extends Component {
 
     this.setState({
       ...this.state,
-      likes: this.props.trip.likes
+      likes: this.props.trip.likes,
     });
   }
 
@@ -65,11 +65,11 @@ export class TripCard extends Component {
         ...this.state,
         liked:
           this.props.user !== null
-            ? this.props.trip.likes.find(name => {
+            ? this.props.trip.likes.find((name) => {
                 console.log(name.userName, this.props.user.fullname);
                 return name.userName === this.props.user.fullname;
               })
-            : false
+            : false,
       });
     }
   }
@@ -77,6 +77,11 @@ export class TripCard extends Component {
   toggleModal = () => {
     this.setState({ ...this.state, show: !this.state.show });
   };
+
+  addDefaultSrc(e) {
+    e.target.onError = null;
+    e.target.src = "http://localhost:5000/uploads/default_image.jpg";
+  }
 
   render() {
     let trip = this.props.trip;
@@ -90,14 +95,16 @@ export class TripCard extends Component {
       const end = end_hour.slice(0, 2);
       duration = end - start;
     }
+
     return (
       <div key={trip.id} className="tripp">
         <div className="tripImage">
           <Link to={"/trip/" + trip.id}>
             <img
+              src={trip.image}
+              onError={this.addDefaultSrc}
               className="trippImage"
-              src={"http://localhost:5000/" + trip.image}
-              alt=""
+              alt="tripimage"
             />
           </Link>
           <p className="price">Price : {trip.price} €</p>
@@ -146,7 +153,7 @@ export class TripCard extends Component {
         {this.state.show ? (
           <Modal id="modal">
             <div>
-              {this.state.likes.map(like => (
+              {this.state.likes.map((like) => (
                 <p>{like.userName}</p>
               ))}
               <button onClick={this.toggleModal}>Close</button>
@@ -158,11 +165,8 @@ export class TripCard extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  isLoggedIn: state.userReducer.isLoggedIn
+const mapStateToProps = (state) => ({
+  isLoggedIn: state.userReducer.isLoggedIn,
 });
 
-export default connect(
-  mapStateToProps,
-  { addLike, removeLike }
-)(TripCard);
+export default connect(mapStateToProps, { addLike, removeLike })(TripCard);

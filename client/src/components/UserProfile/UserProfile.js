@@ -1,37 +1,51 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUser, clearUser } from "../../actions/userActions";
-import { fetchTrips } from "../../actions/tripActions";
-import { Redirect, useParams, useHistory, useLocation } from "react-router-dom";
+import { fetchUserTrips } from "../../actions/tripActions";
+import { Redirect, useParams, useLocation } from "react-router-dom";
 import { TripCard } from "../Main/TripCard/TripCard";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
 
-const UserProfile = (props) => {
-  console.log(props);
-  const isFetching = useSelector((state) => state.tripReducer.isFetching);
+const override = css`
+  display: block;
+  margin: 10% auto;
+  border-color: red;
+`;
+
+const UserProfile = () => {
+  const fetchingUserTrips = useSelector(
+    (state) => state.loadingReducer.loadingUserTrips
+  );
+  const loadingCurrentUser = useSelector(
+    (state) => state.loadingReducer.loadingCurrentUser
+  );
   const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
   const user = useSelector((state) => state.userReducer.user);
   const fetchedUser = useSelector((state) => state.userReducer.fetchedUser);
-  const trips = useSelector((state) => state.tripReducer.trips);
+  const trips = useSelector((state) => state.tripReducer.user_trips);
   const userID = +useParams().id;
   const location = useLocation();
   const dispatch = useDispatch();
+  const loadingUserData = useSelector(
+    (state) => state.loadingReducer.loadingUserData
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
     dispatch(fetchUser(userID));
-    if (trips.length < 1) {
-      dispatch(fetchTrips());
-    }
+    dispatch(fetchUserTrips(userID));
+    fetchUserTrips(userID);
     return () => {
       clearUser();
     };
-  }, fetchedUser);
+  }, [userID, fetchUser, fetchUserTrips]);
 
-  if (isFetching && !isLoggedIn) {
-    return <div>LOADING COMPONENT</div>;
+  if (loadingCurrentUser) {
+    return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
-  if (!isFetching && !isLoggedIn) {
+  if (!isLoggedIn) {
     return (
       <Redirect
         to={{
@@ -41,7 +55,12 @@ const UserProfile = (props) => {
       />
     );
   }
-  if (isLoggedIn && !isFetching && user.id === userID) {
+
+  if (fetchingUserTrips || loadingUserData) {
+    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+  }
+
+  if (user.id === userID) {
     return (
       <Redirect
         to={{
@@ -52,31 +71,8 @@ const UserProfile = (props) => {
     );
   }
 
-  let filteredTrips = [];
-  // instead of filtering user trips like this -> since with large amount of data it is bad, we
-  // make an endpoint for certain user trips at backend and fetch them that way
-  // and then we dont have filtered trips but only trips inside this component
-  if (isLoggedIn && !isFetching) {
-    filteredTrips = trips
-      .filter((trip) => {
-        return trip.UserId === userID;
-      })
-      .map((trip) => {
-        return (
-          <TripCard
-            key={trip.id}
-            trip={trip}
-            user={user}
-            isLoggedIn={isLoggedIn}
-          ></TripCard>
-        );
-      });
-  }
-  console.log("lol2", fetchedUser);
-
-  let fetchedUserTrips = <div>WHY IS THIS SHOWN</div>;
-  if (!!fetchedUser && !isFetching) {
-    fetchedUserTrips = (
+  return (
+    <div class="userProfile">
       <div className="profilInfo">
         <div className="profilImg">
           <div className="profilImg1">
@@ -95,44 +91,18 @@ const UserProfile = (props) => {
           </p>
         </div>
       </div>
-    );
-  }
-  return (
-    <div class="userProfile">
-      {fetchedUserTrips}
       <div className="myTripsHeading">
         <p>{fetchedUser.fullname} TRIPS</p>
       </div>
       <div className="tripsContainer">
-        <div>{filteredTrips}</div>
+        <div className="trips">
+          {trips.map((trip) => (
+            <TripCard key={trip.id} trip={trip} user={user}></TripCard>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
 export default UserProfile;
-/* {trips[0] ? <div className="trips">{trips}</div> : null}
- */
-
-/* <div>
-        {!!fetchedUser ? (
-          <div className="profilInfo">
-            <div className="profilImg">
-              <div className="profilImg1">
-                <img
-                  src="http://localhost:3000/images/placeimg_640_480_any.jpg"
-                  alt=""
-                />
-              </div>
-            </div>
-            <div className="profilInfo1">
-              <p>
-                <b>Name</b>: {fetchedUser.fullname}
-              </p>
-              <p>
-                <b>Contact</b>: {fetchedUser.email}
-              </p>
-            </div>
-          </div>
-        ) : null}
-      </div> */

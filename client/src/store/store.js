@@ -14,8 +14,8 @@ const store = createStore(
 );
 
 store.subscribe(() => {
-  console.log(store);
-  console.log("something changed");
+  /*  console.log(store);
+  console.log("something changed"); */
 });
 // functions if we want to put the state of the app into localstorage
 export default store;

@@ -1,24 +1,21 @@
-import React, { Component } from "react";
+import React from "react";
 import "./NavBar.css";
 import { Link } from "react-router-dom";
-
 import { userLogout } from "../../actions/userActions";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-class Navbar extends Component {
-  constructor(props) {
-    super(props);
-    this.logout = this.logout.bind(this);
-  }
+const NavBar = () => {
+  const dispatch = useDispatch();
 
-  logout(e) {
+  const logout = (e) => {
     e.preventDefault();
-    this.props.userLogout();
-  }
+    dispatch(userLogout());
+  };
 
-  render() {
-    const { user, isLoggedIn } = this.props;
-    return (
+  const user = useSelector((state) => state.userReducer.user);
+  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  return (
+    <div>
       <header className="second_header">
         <div className="secondHeaderPart">
           <div className="logo">
@@ -37,7 +34,7 @@ class Navbar extends Component {
                     <div className="h2">
                       <Link to="/profile">{user.fullname}</Link>
                     </div>
-                    <div className="logout" onClick={this.logout}>
+                    <div className="logout" onClick={logout}>
                       Logout
                     </div>
                   </div>
@@ -56,15 +53,8 @@ class Navbar extends Component {
           </div>
         </div>
       </header>
-    );
-  }
-}
-const mapStateToProps = state => ({
-  user: state.userReducer.user,
-  isLoggedIn: state.userReducer.isLoggedIn
-});
+    </div>
+  );
+};
 
-export default connect(
-  mapStateToProps,
-  { userLogout }
-)(Navbar);
+export default NavBar;
