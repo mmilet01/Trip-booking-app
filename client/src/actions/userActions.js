@@ -1,15 +1,19 @@
 import {
-  USER_LOGIN,
-  USER_REGISTER,
   USER_LOGOUT,
-  USER_LOADED,
+  USER_LOADED_SUCCESSFULLY,
   USER_LOADED_FAIL,
   USER_LOGIN_FAIL,
   USER_REGISTER_FAIL,
   CLEAR_ERRORS,
-  FETCH_USER,
   CLEAR_USER,
+  LOAD_USER_DATA,
   LOADING_CURRENT_USER,
+  USER_FETCHED_SUCCESSFULLY,
+  LOADING_USER_FAILED,
+  USER_LOGIN_SUCCESSFULLY,
+  USER_REGISTERED_SUCCESSFULLY,
+  USER_REGISTER_START,
+  USER_LOGIN_START,
 } from "../constants/actions";
 import axios from "axios";
 
@@ -21,7 +25,7 @@ export const userLoaded = () => (dispatch) => {
     .get("/api/users/")
     .then((res) => {
       dispatch({
-        type: USER_LOADED,
+        type: USER_LOADED_SUCCESSFULLY,
         payload: res.data.user,
       });
     })
@@ -36,6 +40,9 @@ export const userLoaded = () => (dispatch) => {
 };
 
 export const userLogin = (body) => (dispatch) => {
+  dispatch({
+    type: USER_LOGIN_START,
+  });
   axios
     .post("/api/users/login", body)
     .then((res) => {
@@ -43,7 +50,7 @@ export const userLogin = (body) => (dispatch) => {
         localStorage.setItem("token", res.data.token);
       }
       dispatch({
-        type: USER_LOGIN,
+        type: USER_LOGIN_SUCCESSFULLY,
         payload: res.data.user,
       });
     })
@@ -58,6 +65,9 @@ export const userLogin = (body) => (dispatch) => {
 };
 
 export const userRegister = (body) => (dispatch) => {
+  dispatch({
+    type: USER_REGISTER_START,
+  });
   axios
     .post("/api/users/register", body)
     .then((res) => {
@@ -65,7 +75,7 @@ export const userRegister = (body) => (dispatch) => {
         localStorage.setItem("token", res.data.token);
       }
       dispatch({
-        type: USER_REGISTER,
+        type: USER_REGISTERED_SUCCESSFULLY,
         payload: res.data.user,
       });
     })
@@ -80,15 +90,21 @@ export const userRegister = (body) => (dispatch) => {
 };
 
 export const fetchUser = (id) => (dispatch) => {
+  dispatch({
+    type: LOAD_USER_DATA,
+  });
   axios
     .get("/api/users/user/" + id)
     .then((res) => {
       dispatch({
-        type: FETCH_USER,
+        type: USER_FETCHED_SUCCESSFULLY,
         payload: res.data.user,
       });
     })
     .catch((err) => {
+      dispatch({
+        type: LOADING_USER_FAILED,
+      });
       console.log("Failure catching user profile", err.response);
     });
 };
@@ -106,8 +122,8 @@ export const userLogout = () => (dispatch) => {
   });
 };
 
-export const clearningErrors = () => {
-  return {
+export const clearningErrors = () => (dispatch) => {
+  dispatch({
     type: CLEAR_ERRORS,
-  };
+  });
 };

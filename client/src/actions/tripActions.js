@@ -7,13 +7,23 @@ import {
   EDITING_TRIP,
   LOADING_SINGLE_TRIP_FAILED,
   LOAD_TRIPS,
+  DELETING_TRIP,
+  TRIP_DELETED_SUCCESSFULLY,
+  TRIP_DELETING_FAILED,
   LOADING_TRIPS_FAILED,
   TRIP_CREATION_FAILED,
+  TRIP_EDITING_FAILED,
+  POSTING_COMMENT,
+  POSTING_COMMENT_FAILED,
   SINGLE_TRIP_FETCHED_SUCCESSFULLY,
   TRIPS_FETCHED_SUCCESSFULLY,
   LOAD_USER_TRIPS_FAILED,
+  ADDING_LIKE,
+  LIKE_ADDED_SUCCESSFULLY,
+  ADDING_LIKE_FAILED,
   LOAD_USER_TRIPS,
   TRIP_CREATED_SUCCESSFULLY,
+  COMMENT_POSTED_SUCCESSFULLY,
   CREATING_TRIP,
 } from "../constants/actions";
 import axios from "axios";
@@ -58,7 +68,7 @@ export const fetchSingleTrip = (id) => (dispatch, getState) => {
     });
 };
 
-export const createTrip = (data, history) => {
+export const createTrip = (data, history) => (dispatch) => {
   dispatch({ type: CREATING_TRIP });
   axios
     .post("/api/trips", data)

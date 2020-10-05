@@ -1,10 +1,10 @@
 import {
   TRIPS_FETCHED_SUCCESSFULLY,
   SINGLE_TRIP_FETCHED_SUCCESSFULLY,
-  DELETE_TRIP,
-  EDIT_TRIP,
+  TRIP_DELETED_SUCCESSFULLY,
+  TRIP_EDITED_SUCCESSFULLY,
   CLEAR_TRIP,
-  ADD_COMMENT,
+  COMMENT_POSTED_SUCCESSFULLY,
   ADD_LIKE,
   REMOVE_LIKE,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
@@ -35,12 +35,12 @@ export default function (state = initialState, action) {
         trip: action.payload,
         comments: action.payload.comments,
       };
-    case DELETE_TRIP:
+    case TRIP_DELETED_SUCCESSFULLY:
       return {
         ...state,
         trips: state.trips.filter((trip) => trip.id !== action.payload),
       };
-    case EDIT_TRIP:
+    case TRIP_EDITED_SUCCESSFULLY:
       return {
         ...state,
         trip: action.payload,
@@ -51,7 +51,7 @@ export default function (state = initialState, action) {
         trip: {},
         comments: [],
       };
-    case ADD_COMMENT:
+    case COMMENT_POSTED_SUCCESSFULLY:
       return {
         ...state,
         comments: [...state.comments, action.payload],

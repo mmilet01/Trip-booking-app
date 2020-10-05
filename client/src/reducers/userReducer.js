@@ -1,13 +1,14 @@
 import {
-  USER_REGISTER,
+  USER_REGISTERED_SUCCESSFULLY,
   USER_REGISTER_FAIL,
-  USER_LOGIN,
+  USER_LOGIN_SUCCESSFULLY,
   USER_LOGIN_FAIL,
-  USER_LOADED,
+  USER_LOADED_SUCCESSFULLY,
   USER_LOADED_FAIL,
   USER_LOGOUT,
   CLEAR_ERRORS,
-  FETCH_USER,
+  USER_FETCHED_SUCCESSFULLY,
+  LOADING_USER_FAILED,
   CLEAR_USER,
 } from "../constants/actions";
 
@@ -20,23 +21,19 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case USER_LOGIN:
-    case USER_REGISTER:
+    case USER_LOGIN_SUCCESSFULLY:
+    case USER_REGISTERED_SUCCESSFULLY:
+    case USER_LOADED_SUCCESSFULLY:
       return {
         ...state,
         isLoggedIn: true,
         user: action.payload,
       };
-    case FETCH_USER:
+    case USER_FETCHED_SUCCESSFULLY:
+    case LOADING_USER_FAILED:
       return {
         ...state,
         fetchedUser: action.payload,
-      };
-    case USER_LOADED:
-      return {
-        ...state,
-        isLoggedIn: true,
-        user: action.payload,
       };
     case USER_LOGOUT:
       return {

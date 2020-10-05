@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import "./EditTrip.css";
 import TimePicker from "rc-time-picker";
 import { editTrip } from "../../actions/tripActions";
@@ -23,7 +23,7 @@ class EditTrip extends Component {
       price: this.props.trip.price ? this.props.trip.price : "",
       location: this.props.trip.location ? this.props.trip.location : "",
       id: this.props.trip.id,
-      tripImage: ""
+      tripImage: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
@@ -34,20 +34,20 @@ class EditTrip extends Component {
     const { value, name } = e.target;
     this.setState({
       ...this.state,
-      [name]: value
+      [name]: value,
     });
   }
   handleDateChange(dateName, dateValue) {
     this.setState({
       ...this.state,
-      [dateName]: dateValue
+      [dateName]: dateValue,
     });
   }
 
-  fileChanged = event => {
+  fileChanged = (event) => {
     this.setState({
       ...this.state,
-      tripImage: event.target.files[0]
+      tripImage: event.target.files[0],
     });
   };
 
@@ -105,14 +105,14 @@ class EditTrip extends Component {
               placeholder="Starting time"
               className="time"
               showSecond={false}
-              onChange={time => this.handleDateChange("start_hour", time)}
+              onChange={(time) => this.handleDateChange("start_hour", time)}
               defaultValue={moment(this.state.start_hour)}
             />
             <TimePicker
               placeholder="Ending time"
               className="time"
               showSecond={false}
-              onChange={time => this.handleDateChange("end_hour", time)}
+              onChange={(time) => this.handleDateChange("end_hour", time)}
               defaultValue={moment(this.state.end_hour)}
             />
           </div>
@@ -165,10 +165,7 @@ class EditTrip extends Component {
     );
   }
 }
-const mapStateToProps = state => ({
-  trip: state.tripReducer.trip
+const mapStateToProps = (state) => ({
+  trip: state.tripReducer.trip,
 });
-export default connect(
-  mapStateToProps,
-  { editTrip }
-)(withRouter(EditTrip));
+export default connect(mapStateToProps, { editTrip })(withRouter(EditTrip));

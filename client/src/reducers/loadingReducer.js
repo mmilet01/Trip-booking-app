@@ -7,15 +7,14 @@ import {
   TRIPS_FETCHED_SUCCESSFULLY,
   LOAD_USER_DATA,
   SINGLE_TRIP_FETCHED_SUCCESSFULLY,
+  USER_FETCHED_SUCCESSFULLY,
+  LOADING_USER_FAILED,
   LOADING_CURRENT_USER,
-  USER_LOADED,
+  USER_LOADED_SUCCESSFULLY,
   USER_LOADED_FAIL,
   LOAD_USER_TRIPS_FAILED,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
 } from "../constants/actions";
-
-// 2 options : either create new action : LOAD_SINGLE_TRIP_FINISHED
-// or when dispaching an action listen to it: for example TRIPSFETCHED or failed and change state accordingly
 
 const initialState = {
   loadingSingleTrip: false,
@@ -47,13 +46,19 @@ export default function (state = initialState, action) {
         ...state,
         loadingUserData: true,
       };
+    case USER_FETCHED_SUCCESSFULLY:
+    case LOADING_USER_FAILED:
+      return {
+        ...state,
+        loadingUserData: false,
+      };
     case LOADING_CURRENT_USER:
       return {
         ...state,
         loadingCurrentUser: true,
       };
     case USER_LOADED_FAIL:
-    case USER_LOADED:
+    case USER_LOADED_SUCCESSFULLY:
       return {
         ...state,
         loadingCurrentUser: false,
