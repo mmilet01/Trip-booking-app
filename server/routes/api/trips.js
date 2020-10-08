@@ -89,57 +89,67 @@ router.get("/show/:id", (req, res) => {
       return res.status(200).json(trip);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "Creating Post Failed" });
+      return res.status(500).json({ msg: "FAILED" });
     });
 });
 
 router.get("/userTrips/:id", (req, res) => {
   const id = req.params.id;
   Trip.findAll({ where: { UserId: id } }).then((trips) => {
-    res.send(trips);
+    return res.status(200).json(trips);
   });
 });
 
 router.post("/like/:id", auth, (req, res) => {
   const id = req.params.id;
-  Trip.findOne({ where: { id: id } }).then((trip) => {
-    trip.dataValues.likes.push({
-      userName: req.user.fullname,
-      id: req.user.id,
-      userProfileImage: "what",
+  Trip.findOne({ where: { id: id } })
+    .then((trip) => {
+      trip.dataValues.likes.push({
+        userName: req.user.fullname,
+        id: req.user.id,
+        userProfileImage: "what",
+      });
+      Trip.update(trip.dataValues, { where: { id: id } })
+        .then(() => {
+          return res.status(200).json(trip);
+        })
+        .catch((err) => {
+          return res.status(500).json({ msg: "FAILED", err });
+        });
+    })
+    .catch((err) => {
+      return res
+        .status(500)
+        .json({ msg: "Failed to find trip with that id", err });
     });
-
-    Trip.update(trip.dataValues, { where: { id: id } })
-      .then((updatedTrip) => {
-        res.json({ trip });
-      })
-      .catch((err) => console.log("ERROR", err));
-  });
 });
 
 router.post("/unlike/:id", auth, (req, res) => {
-  console.log(req.user);
   const id = req.params.id;
-  Trip.findOne({ where: { id: id } }).then((trip) => {
-    console.log(trip.dataValues);
-    const tripUpdate = trip;
-    tripUpdate.dataValues.likes = trip.dataValues.likes.filter((likedBy) => {
-      return likedBy.userName !== req.user.fullname;
+  Trip.findOne({ where: { id: id } })
+    .then((trip) => {
+      const updatedTrip = trip;
+      updatedTrip.dataValues.likes = trip.dataValues.likes.filter((likedBy) => {
+        return likedBy.id != req.user.id;
+      });
+      Trip.update(updatedTrip.dataValues, { where: { id: id } })
+        .then(() => {
+          return res.status(200).json(trip);
+        })
+        .catch((err) => {
+          return res.status(500).json({ msg: "FAILED", err });
+        });
+    })
+    .catch((err) => {
+      return res
+        .status(500)
+        .json({ msg: "Failed to find trip with that id", err });
     });
-
-    Trip.update(tripUpdate.dataValues, { where: { id: id } })
-      .then((updatedTrip) => {
-        res.json({ trip });
-      })
-      .catch((err) => console.log("ERROR", err));
-  });
 });
 
 router.post("/comment/:id", auth, (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
   Trip.findOne({ where: { id: id } }).then((trip) => {
-    console.log(trip.dataValues);
     const comment = {
       userName: req.user.fullname,
       id: req.user.id,
@@ -152,7 +162,9 @@ router.post("/comment/:id", auth, (req, res) => {
       .then((updatedTrip) => {
         res.json({ comment });
       })
-      .catch((err) => console.log("ERROR", err));
+      .catch((err) => {
+        return res.status(500).json({ msg: "FAILED" });
+      });
   });
 });
 
@@ -183,7 +195,9 @@ router.put("/edit/:id", upload.single("tripImage"), (req, res) => {
     .then(() => {
       res.status(200).send("trip updated id= " + id);
     })
-    .catch((err) => console.log("ERROR", err));
+    .catch((err) => {
+      return res.status(500).json({ msg: "FAILED" });
+    });
 });
 
 router.delete("/delete/:id", (req, res) => {
@@ -194,7 +208,9 @@ router.delete("/delete/:id", (req, res) => {
     .then(() => {
       res.status(200).send("Deleting successfull");
     })
-    .catch((err) => console.log("ERROR", err));
+    .catch((err) => {
+      return res.status(500).json({ msg: "FAILED" });
+    });
 });
 
 module.exports = router;

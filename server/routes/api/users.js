@@ -16,13 +16,13 @@ router.get("/", auth, (req, res) => {
   })
     .then((user) => {
       return res.json({
-        user: user,
+        user,
       });
     })
     .catch((err) => {
-      console.log(err);
       return res.status(500).json({
         msg: "User not found",
+        err,
       });
     });
 });
@@ -31,7 +31,6 @@ router.get("/user/:id", (req, res) => {
   id = +req.params.id;
   User.findOne({ where: { id: id } })
     .then((user) => {
-      console.log("USER SERVER", user);
       return res.json({
         user,
       });
@@ -39,6 +38,7 @@ router.get("/user/:id", (req, res) => {
     .catch((err) => {
       res.status(500).json({
         msg: "User fetching Error",
+        err,
       });
     });
 });
@@ -90,7 +90,6 @@ router.post("/register", (req, res) => {
             );
           })
           .catch((err) => {
-            console.log(err);
             return res.status(500).json({
               msg: "Server error - User not created, try again later",
             });
@@ -128,7 +127,9 @@ router.post("/login", (req, res) => {
           return res.status(500).json({ msg: "Server error, try again later" });
         }
         if (!token) {
-          return res.json({ msg: "Server error, try again later" });
+          return res
+            .status(500)
+            .json({ msg: "Server error, no token, try again later" });
         }
         return res.json({
           user: userSign,

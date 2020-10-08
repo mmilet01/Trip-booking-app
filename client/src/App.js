@@ -9,8 +9,7 @@ import Register from "./components/Main/Auth/Register/Register";
 import Login from "./components/Main/Auth/Login/Login";
 import TripList from "./components/Main/TripList/TripList";
 import TripDetails from "./components/Main/TripDetails/TripDetails";
-import CreateTrip from "./components/Main/CreateTrip/CreateTrip";
-import EditTrip from "./components/EditTrip/EditTrip";
+import CreateEditTrip from "./components/Main/CreateEditTrip/CreateEditTrip";
 import UserProfile from "./components/UserProfile/UserProfile";
 
 import { Provider } from "react-redux";
@@ -36,8 +35,8 @@ class App extends Component {
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/trips" component={TripList} />
                 <Route exact path="/trip/:id" component={TripDetails} />
-                <Route exact path="/edit/:id" component={EditTrip} />
-                <Route exact path="/createTrip" component={CreateTrip} />
+                <Route exact path="/edit/:id" component={CreateEditTrip} />
+                <Route exact path="/createTrip" component={CreateEditTrip} />
               </div>
             </Switch>
             <Footer />

@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import "./TripList.css";
-import CreateTrip from "../CreateTrip/CreateTrip";
-
 import { connect } from "react-redux";
 import { fetchTrips } from "../../../actions/tripActions";
 
@@ -12,7 +10,7 @@ export class TripList extends Component {
     super(props);
     this.state = {
       user: "",
-      searchTerm: ""
+      searchTerm: "",
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -26,13 +24,13 @@ export class TripList extends Component {
     const { value, name } = e.target;
     this.setState({
       ...this.state,
-      [name]: value
+      [name]: value,
     });
   }
 
   render() {
     let trips = this.props.trips
-      .filter(trip => {
+      .filter((trip) => {
         if (
           trip.name.toUpperCase().includes(this.state.searchTerm.toUpperCase())
         ) {
@@ -41,7 +39,7 @@ export class TripList extends Component {
           return false;
         }
       })
-      .map(trip => {
+      .map((trip) => {
         return (
           <TripCard key={trip.id} trip={trip} user={this.props.user}></TripCard>
         );
@@ -74,14 +72,11 @@ export class TripList extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   trips: state.tripReducer.trips,
-  user: state.userReducer.user
+  user: state.userReducer.user,
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    fetchTrips
-  }
-)(TripList);
+export default connect(mapStateToProps, {
+  fetchTrips,
+})(TripList);

@@ -145,8 +145,8 @@ export const addLike = (id) => (dispatch, getState) => {
     .post("/api/trips/like/" + id, null)
     .then((res) => {
       let newTrips = getState().tripReducer.trips.map((trip) => {
-        if (trip.id == res.data.trip.id) {
-          trip = res.data.trip;
+        if (trip.id == res.data.id) {
+          trip = res.data;
         }
         return trip;
       });
@@ -165,18 +165,18 @@ export const removeLike = (id) => (dispatch, getState) => {
     .post("/api/trips/unlike/" + id, null)
     .then((res) => {
       let newTrips = getState().tripReducer.trips.map((trip) => {
-        if (trip.id == res.data.trip.id) {
-          trip = res.data.trip;
+        if (trip.id == res.data.id) {
+          trip = res.data;
         }
         return trip;
       });
       dispatch({
-        type: ADD_LIKE,
+        type: LIKE_ADDED_SUCCESSFULLY,
         payload: newTrips,
       });
     })
     .catch((err) => {
-      console.log("Error in LIKING", err);
+      dispatch({ ADDING_LIKE_FAILED });
     });
 };
 

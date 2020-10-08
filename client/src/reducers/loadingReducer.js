@@ -14,6 +14,8 @@ import {
   USER_LOADED_FAIL,
   LOAD_USER_TRIPS_FAILED,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
+  LIKE_ADDED_SUCCESSFULLY,
+  ADDING_LIKE,
 } from "../constants/actions";
 
 const initialState = {
@@ -22,6 +24,7 @@ const initialState = {
   loadingUserTrips: false,
   loadingUserData: false,
   loadingCurrentUser: false,
+  addingLike: false,
 };
 
 export default function (state = initialState, action) {
@@ -80,6 +83,16 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingUserTrips: false,
+      };
+    case ADDING_LIKE:
+      return {
+        ...state,
+        addingLike: true,
+      };
+    case LIKE_ADDED_SUCCESSFULLY:
+      return {
+        ...state,
+        addingLike: false,
       };
     default:
       return state;

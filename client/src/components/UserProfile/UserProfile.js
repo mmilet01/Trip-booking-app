@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUser, clearUser } from "../../actions/userActions";
 import { fetchUserTrips } from "../../actions/tripActions";
 import { Redirect, useParams, useLocation } from "react-router-dom";
-import { TripCard } from "../Main/TripCard/TripCard";
+import TripCard from "../Main/TripCard/TripCard";
 import { css } from "@emotion/core";
 import ClipLoader from "react-spinners/ClipLoader";
 

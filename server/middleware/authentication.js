@@ -9,7 +9,8 @@ function auth(req, res, next) {
       next();
     } catch (err) {
       return res.status(500).json({
-        msg: "Verification failed, token not valid, autorization denied"
+        msg: "Verification failed, token not valid, autorization denied",
+        err,
       });
     }
   }

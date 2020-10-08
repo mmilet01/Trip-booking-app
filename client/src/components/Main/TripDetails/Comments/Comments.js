@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import "./Comments.css";
 
 function Comments(props) {
-  console.log(props);
-  console.log("comments length", props.comments.length);
   return (
     <div className="comment_section">
       {props.comments.length > 0 ? (
