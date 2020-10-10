@@ -33,8 +33,6 @@ const Footer = () => {
       <div className="certificate">
         <h3>Something?</h3>
         <div className="icons">
-          {/*           <i class="fas fa-trophy fa-2x" />
-           */}{" "}
           <i className="fab fa-tripadvisor fa-4x" />
         </div>
       </div>

@@ -1,7 +1,6 @@
 import {
   FETCHING_USER_TRIPS_SUCCESSFULLY,
   CLEAR_TRIP,
-  ADD_LIKE,
   TRIP_EDITED_SUCCESSFULLY,
   LOAD_SINGLE_TRIP,
   EDITING_TRIP,
@@ -24,6 +23,9 @@ import {
   LOAD_USER_TRIPS,
   TRIP_CREATED_SUCCESSFULLY,
   COMMENT_POSTED_SUCCESSFULLY,
+  REMOVED_LIKE_SUCCESSFULLY,
+  REMOVING_LIKE,
+  REMOVE_LIKE_FAILED,
   CREATING_TRIP,
 } from "../constants/actions";
 import axios from "axios";
@@ -161,6 +163,7 @@ export const addLike = (id) => (dispatch, getState) => {
 };
 
 export const removeLike = (id) => (dispatch, getState) => {
+  dispatch({ type: REMOVING_LIKE });
   axios
     .post("/api/trips/unlike/" + id, null)
     .then((res) => {
@@ -171,12 +174,12 @@ export const removeLike = (id) => (dispatch, getState) => {
         return trip;
       });
       dispatch({
-        type: LIKE_ADDED_SUCCESSFULLY,
+        type: REMOVED_LIKE_SUCCESSFULLY,
         payload: newTrips,
       });
     })
     .catch((err) => {
-      dispatch({ ADDING_LIKE_FAILED });
+      dispatch({ REMOVE_LIKE_FAILED });
     });
 };
 

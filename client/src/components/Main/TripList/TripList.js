@@ -1,82 +1,78 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import "./TripList.css";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchTrips } from "../../../actions/tripActions";
-
+import { Redirect, useParams, useLocation } from "react-router-dom";
 import TripCard from "../TripCard/TripCard";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
 
-export class TripList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: "",
-      searchTerm: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
+const override = css`
+  display: block;
+  margin: 10% auto;
+  border-color: red;
+`;
 
-  componentDidMount() {
-    this.props.fetchTrips();
+const TripList = () => {
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+  const trips = useSelector((state) => state.tripReducer.trips);
+  const user = useSelector((state) => state.userReducer.user);
+  const loadingTrips = useSelector(
+    (state) => state.loadingReducer.loadingTrips
+  );
+
+  useEffect(() => {
     window.scrollTo(0, 0);
+    dispatch(fetchTrips());
+    return () => {};
+  }, [fetchTrips]);
+
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  if (loadingTrips) {
+    return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
-  handleChange(e) {
-    const { value, name } = e.target;
-    this.setState({
-      ...this.state,
-      [name]: value,
+  let filteredTrips = trips
+    .filter((trip) => {
+      if (trip.name.toUpperCase().includes(searchTerm.toUpperCase())) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .map((trip) => {
+      return <TripCard key={trip.id} trip={trip} user={user}></TripCard>;
     });
-  }
 
-  render() {
-    let trips = this.props.trips
-      .filter((trip) => {
-        if (
-          trip.name.toUpperCase().includes(this.state.searchTerm.toUpperCase())
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      })
-      .map((trip) => {
-        return (
-          <TripCard key={trip.id} trip={trip} user={this.props.user}></TripCard>
-        );
-      });
-    return (
-      <div>
-        <div className="filter">
-          <img
-            className="triplistimg"
-            src="http://localhost:3000/images/rafting.jpg"
-            alt=""
-          />
-        </div>
-        <div className="trips_heading">
-          <label className="searchV">
-            <input
-              name="searchTerm"
-              placeholder="Search Trips by Destination"
-              value={this.state.searchTerm}
-              onChange={this.handleChange}
-            />
-          </label>
-        </div>
-        <hr />
-        <div className="tripsContainer">
-          <div className="trips">{trips}</div>
-        </div>
+  return (
+    <div>
+      <div className="filter">
+        <img
+          className="triplistimg"
+          src="http://localhost:3000/images/rafting.jpg"
+          alt=""
+        />
       </div>
-    );
-  }
-}
+      <div className="trips_heading">
+        <label className="searchV">
+          <input
+            name="searchTerm"
+            placeholder="Search Trips by Destination"
+            value={searchTerm}
+            onChange={handleChange}
+          />
+        </label>
+      </div>
+      <hr />
+      <div className="tripsContainer">
+        <div className="trips">{filteredTrips}</div>
+      </div>
+    </div>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  trips: state.tripReducer.trips,
-  user: state.userReducer.user,
-});
-
-export default connect(mapStateToProps, {
-  fetchTrips,
-})(TripList);
+export default TripList;

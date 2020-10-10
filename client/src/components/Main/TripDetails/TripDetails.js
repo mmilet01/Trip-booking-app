@@ -1,162 +1,163 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import "./TripDetails.css";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { withRouter } from "react-router";
+import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter, useHistory } from "react-router";
 import {
   fetchSingleTrip,
   deleteTrip,
   clearTrip,
-  addComment
+  addComment,
 } from "../../../actions/tripActions";
 import Comments from "./Comments/Comments.js";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
 
-export class TripDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      comment: "",
-      loading: false
-    };
-    this.deleteTrip = this.deleteTrip.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
+const override = css`
+  display: block;
+  margin: 10% auto;
+  border-color: red;
+`;
 
-  componentDidMount() {
-    this.props.fetchSingleTrip(this.props.match.params.id);
+const TripDetails = () => {
+  const tripID = +useParams().id;
+  const [comment, setComment] = useState("");
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector((state) => state.userReducer.user);
+  const trip = useSelector((state) => state.tripReducer.trip);
+  const comments = useSelector((state) => state.tripReducer.comments);
+  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  const loadingSingleTrip = useSelector(
+    (state) => state.loadingReducer.loadingSingleTrip
+  );
+
+  useEffect(() => {
     window.scrollTo(0, 0);
-  }
+    dispatch(fetchSingleTrip(tripID));
+    return () => {
+      dispatch(clearTrip());
+    };
+  }, [fetchSingleTrip, tripID]);
 
-  deleteTrip(event) {
-    event.preventDefault();
-    this.props.deleteTrip(this.props.trip.id, this.props.history);
-  }
-
-  componentWillUnmount() {
-    this.props.clearTrip();
-  }
-
-  handleChange(e) {
-    this.setState({
-      ...this.state,
-      comment: e.target.value
-    });
-  }
-  onSubmit(e) {
+  const deleteTrip = (e) => {
     e.preventDefault();
-    this.props.addComment(this.props.trip.id, this.state.comment);
-    this.setState({
-      loading: false,
-      comment: ""
-    });
+    dispatch(deleteTrip(tripID, history));
+  };
+
+  const handleChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const addDefaultSrc = (e) => {
+    e.target.onError = null;
+    e.target.src = "http://localhost:5000/uploads/default_image.jpg";
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addComment(tripID, comment));
+    setComment("");
+  };
+
+  if (loadingSingleTrip) {
+    return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
-  render() {
-    console.log(this.props.trip);
-    let duration = 0;
-    let start_hour = 0;
-    let end_hour = 0;
-    if (this.props.trip.start_hour) {
-      start_hour = this.props.trip.start_hour.slice(16, 21);
-      end_hour = this.props.trip.end_hour.slice(16, 21);
-      const start = start_hour.slice(0, 2);
-      const end = end_hour.slice(0, 2);
-      duration = end - start;
-    }
-    return (
-      <div className="tripDetailsContainer">
-        <div className="detailsImg">
-          <img src={"http://localhost:5000/" + this.props.trip.image} alt="" />
-        </div>
-        <div className="infoGlavni">
-          <div className="firstRow">
-            <div className="faDiv">
-              <i className="fas fa-map-marker-alt fa-2x" />
-              <p>{this.props.trip.location}</p>
-            </div>
-            <div className="faDiv">
-              <i className="fas fa-hourglass-start fa-2x" />
-              <p>{duration} hours</p>
-            </div>
-          </div>
-          <div className="secondRow">
-            <div className="faDiv">
-              <i className="fas fa-tag fa-2x" />
-              <p>{this.props.trip.price} kn</p>
-            </div>
-
-            <div className="faDiv">
-              <i className="fas fa-ticket-alt fa-2x" />
-              <p>{this.props.trip.freespace} places left</p>
-            </div>
-          </div>
-          <div className="thirdRow">
-            <div className="faDiv">
-              <i className="far fa-calendar-alt fa-2x" />
-              <div>
-                <p> Start: {start_hour}h</p>
-                <p> End: {end_hour}h</p>
-              </div>
-            </div>
-            <div className="faDiv">
-              <i className="fas fa-user-tie fa-2x" />
-              <p>
-                Posted by:
-                <Link to={"/profile/user/" + this.props.trip.UserId}>
-                  {this.props.trip.createdBy}
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
-        <br />
-        <br />
-        <div className="tripDescription">
-          <p>{this.props.trip.description}</p>
-        </div>
-        <br />
-        <br />
-
-        {this.props.isLoggedIn ? (
-          <div>
-            {this.props.trip.UserId === this.props.user.id ? (
-              <div className="botuni">
-                <button className="bookNow" onClick={this.deleteTrip}>
-                  Delete
-                </button>
-                <Link to={"/edit/" + this.props.trip.id}>
-                  <button className="bookNow">Edit</button>
-                </Link>
-              </div>
-            ) : (
-              <p>
-                <button className="bookNow">BOOK NOW</button>
-              </p>
-            )}
-          </div>
-        ) : null}
-        <hr />
-        <Comments
-          comments={this.props.comments}
-          onSubmit={this.onSubmit}
-          handleChange={this.handleChange}
-          comment={this.state.comment}
-          isLoggedIn={this.props.isLoggedIn}
+  let duration = 0;
+  let start_hour = 0;
+  let end_hour = 0;
+  if (trip.start_hour) {
+    start_hour = trip.start_hour.slice(16, 21);
+    end_hour = trip.end_hour.slice(16, 21);
+    const start = start_hour.slice(0, 2);
+    const end = end_hour.slice(0, 2);
+    duration = end - start;
+  }
+  return (
+    <div className="tripDetailsContainer">
+      <div className="detailsImg">
+        <img
+          src={"http://localhost:5000/" + trip.image}
+          onError={addDefaultSrc}
+          alt=""
         />
       </div>
-    );
-  }
-}
+      <div className="infoGlavni">
+        <div className="firstRow">
+          <div className="faDiv">
+            <i className="fas fa-map-marker-alt fa-2x" />
+            <p>{trip.location}</p>
+          </div>
+          <div className="faDiv">
+            <i className="fas fa-hourglass-start fa-2x" />
+            <p>{duration} hours</p>
+          </div>
+        </div>
+        <div className="secondRow">
+          <div className="faDiv">
+            <i className="fas fa-tag fa-2x" />
+            <p>{trip.price} kn</p>
+          </div>
 
-const mapStateToProps = state => ({
-  trip: state.tripReducer.trip,
-  comments: state.tripReducer.comments,
-  isLoggedIn: state.userReducer.isLoggedIn,
-  user: state.userReducer.user
-});
+          <div className="faDiv">
+            <i className="fas fa-ticket-alt fa-2x" />
+            <p>{trip.freespace} places left</p>
+          </div>
+        </div>
+        <div className="thirdRow">
+          <div className="faDiv">
+            <i className="far fa-calendar-alt fa-2x" />
+            <div>
+              <p> Start: {start_hour}h</p>
+              <p> End: {end_hour}h</p>
+            </div>
+          </div>
+          <div className="faDiv">
+            <i className="fas fa-user-tie fa-2x" />
+            <p>
+              Posted by:
+              <Link to={"/profile/user/" + trip.UserId}>{trip.createdBy}</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div className="tripDescription">
+        <p>{trip.description}</p>
+      </div>
+      <br />
+      <br />
 
-export default connect(
-  mapStateToProps,
-  { fetchSingleTrip, deleteTrip, clearTrip, addComment }
-)(withRouter(TripDetails));
+      {isLoggedIn ? (
+        <div>
+          {trip.UserId === user.id ? (
+            <div className="botuni">
+              <button className="bookNow" onClick={deleteTrip}>
+                Delete
+              </button>
+              <Link to={"/edit/" + trip.id}>
+                <button className="bookNow">Edit</button>
+              </Link>
+            </div>
+          ) : (
+            <p>
+              <button className="bookNow">BOOK NOW</button>
+            </p>
+          )}
+        </div>
+      ) : null}
+      <hr />
+      <Comments
+        comments={comments}
+        onSubmit={onSubmit}
+        handleChange={handleChange}
+        comment={comment}
+        isLoggedIn={isLoggedIn}
+      />
+    </div>
+  );
+};
+
+export default withRouter(TripDetails);

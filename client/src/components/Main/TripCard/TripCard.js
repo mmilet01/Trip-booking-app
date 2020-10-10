@@ -1,14 +1,32 @@
 import React, { useState } from "react";
 import "./TripCard.css";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
 import { addLike, removeLike } from "../../../actions/tripActions";
 import Modal from "../../../Modal";
 import { useSelector, useDispatch } from "react-redux";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override = css`
+  display: block;
+  margin: 2px auto;
+  border-color: red;
+`;
 
 const TripCard = (props) => {
   const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
-  const [liked, setLiked] = useState(true);
+  const dispatch = useDispatch();
+  const likingInProgress = useSelector(
+    (state) => state.loadingReducer.likingInProgress
+  );
+  const isLiked = props.trip.likes.find((likedBy) => {
+    if (isLoggedIn) return likedBy.id == props.user.id;
+    return false;
+  });
+
+  const [liked, setLiked] = useState(!!isLiked);
+  const [show, setShow] = useState(false);
+
   const trip = props.trip;
   let duration = 0;
   let start_hour = 0;
@@ -24,6 +42,20 @@ const TripCard = (props) => {
   const addDefaultSrc = (e) => {
     e.target.onError = null;
     e.target.src = "http://localhost:5000/uploads/default_image.jpg";
+  };
+
+  const toggleModal = () => {
+    setShow(!show);
+  };
+
+  const Like = () => {
+    dispatch(addLike(trip.id));
+    setLiked(!liked);
+  };
+
+  const Unlike = () => {
+    dispatch(removeLike(trip.id));
+    setLiked(!liked);
   };
 
   return (
@@ -51,7 +83,7 @@ const TripCard = (props) => {
           <p>Start: {start_hour}</p>
           <p>Duration: {duration}h</p>
 
-          <p className="plikes" onClick="">
+          <p className="plikes" onClick={toggleModal}>
             Likes: {trip.likes.length}
           </p>
         </div>
@@ -64,29 +96,26 @@ const TripCard = (props) => {
         </Link>
         <div className="lajk">
           {isLoggedIn ? (
-            liked ? (
-              <i
-                className="fas fa-thumbs-up fa-2x liked"
-                disabled={!isLoggedIn}
-              />
+            likingInProgress ? (
+              <ClipLoader css={override} size={15} color={"#123abc"} />
+            ) : liked ? (
+              <i className="fas fa-thumbs-up fa-2x liked" onClick={Unlike} />
             ) : (
-              <i className="fas fa-thumbs-up fa-2x" disabled={!isLoggedIn} />
+              <i className="fas fa-thumbs-up fa-2x" onClick={Like} />
             )
-          ) : (
-            <div>notlloggedin</div>
-          )}
+          ) : null}
         </div>
       </div>
-      {/*  {this.state.show ? (
+      {show ? (
         <Modal id="modal">
           <div>
-            {this.state.likes.map((like) => (
+            {trip.likes.map((like) => (
               <p>{like.userName}</p>
             ))}
-            <button onClick={this.toggleModal}>Close</button>
+            <button onClick={toggleModal}>Close</button>
           </div>
         </Modal>
-      ) : null} */}
+      ) : null}
     </div>
   );
 };

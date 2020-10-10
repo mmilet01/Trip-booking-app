@@ -72,7 +72,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div class="userProfile">
+    <div className="userProfile">
       <div className="profilInfo">
         <div className="profilImg">
           <div className="profilImg1">
