@@ -41,7 +41,6 @@ export const fetchTrips = () => (dispatch) => {
       });
     })
     .catch((err) => {
-      console.log("TRIPS FETCHED FAILED", err);
       dispatch({
         type: LOADING_TRIPS_FAILED,
       });
@@ -63,7 +62,6 @@ export const fetchSingleTrip = (id) => (dispatch, getState) => {
       });
     })
     .catch((err) => {
-      console.log("FETCHING SINGLE TRIP FAILED", err);
       dispatch({
         type: LOADING_SINGLE_TRIP_FAILED,
       });
@@ -80,7 +78,6 @@ export const createTrip = (data, history) => (dispatch) => {
     })
     .catch((err) => {
       dispatch({ type: TRIP_CREATION_FAILED });
-      console.log("Error", err);
     });
 };
 
@@ -199,6 +196,5 @@ export const fetchUserTrips = (id) => (dispatch) => {
       dispatch({
         type: LOAD_USER_TRIPS_FAILED,
       });
-      console.log("Ups, something went wrong with fetching user trips", err);
     });
 };

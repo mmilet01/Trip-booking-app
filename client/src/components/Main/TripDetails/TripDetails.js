@@ -27,7 +27,7 @@ const TripDetails = () => {
   const user = useSelector((state) => state.userReducer.user);
   const trip = useSelector((state) => state.tripReducer.trip);
   const comments = useSelector((state) => state.tripReducer.comments);
-  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loadingSingleTrip = useSelector(
     (state) => state.loadingReducer.loadingSingleTrip
   );
@@ -40,7 +40,7 @@ const TripDetails = () => {
     };
   }, [fetchSingleTrip, tripID]);
 
-  const deleteTrip = (e) => {
+  const deletingTrip = (e) => {
     e.preventDefault();
     dispatch(deleteTrip(tripID, history));
   };
@@ -134,7 +134,7 @@ const TripDetails = () => {
         <div>
           {trip.UserId === user.id ? (
             <div className="botuni">
-              <button className="bookNow" onClick={deleteTrip}>
+              <button className="bookNow" onClick={deletingTrip}>
                 Delete
               </button>
               <Link to={"/edit/" + trip.id}>

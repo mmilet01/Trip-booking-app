@@ -26,11 +26,16 @@ export default function (state = initialState, action) {
     case USER_LOADED_SUCCESSFULLY:
       return {
         ...state,
-        isLoggedIn: true,
-        user: action.payload,
+        /*         isLoggedIn: true,
+         */ user: action.payload,
+      };
+    case USER_LOADED_FAIL:
+      return {
+        ...state,
+        /*         isLoggedIn: false,
+         */
       };
     case USER_FETCHED_SUCCESSFULLY:
-    case LOADING_USER_FAILED:
       return {
         ...state,
         fetchedUser: action.payload,
@@ -38,29 +43,23 @@ export default function (state = initialState, action) {
     case USER_LOGOUT:
       return {
         ...state,
-        isLoggedIn: false,
-        user: null,
+        /*         isLoggedIn: false,
+         */ user: null,
       };
     case USER_LOGIN_FAIL:
     case USER_REGISTER_FAIL:
       return {
         ...state,
-        isLoggedIn: false,
-        user: null,
+        /*         isLoggedIn: false,
+         */ user: null,
         errorMsg: action.payload,
       };
-    case USER_LOADED_FAIL:
-      return {
-        ...state,
-        isLoggedIn: false,
-        user: null,
-      };
-    case CLEAR_USER: {
+    case CLEAR_USER:
+    case LOADING_USER_FAILED:
       return {
         ...state,
         fetchedUser: {},
       };
-    }
     case CLEAR_ERRORS:
       return {
         ...state,

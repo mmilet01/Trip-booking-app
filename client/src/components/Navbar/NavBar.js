@@ -13,7 +13,7 @@ const NavBar = () => {
   };
 
   const user = useSelector((state) => state.userReducer.user);
-  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   return (
     <div>
       <header className="second_header">

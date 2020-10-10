@@ -13,6 +13,10 @@ function auth(req, res, next) {
         err,
       });
     }
+  } else {
+    return res.status(500).json({
+      msg: "No token",
+    });
   }
 }
 

@@ -69,12 +69,30 @@ export class Login extends Component {
       });
     }
   }
+
   render() {
-    if (this.props.history.action === "REPLACE" && this.props.isLoggedIn) {
-      let path = this.props.location.state.from;
-      return <Redirect to={path} />;
-    } else if (this.props.isLoggedIn) {
-      return <Redirect to="/profile" />;
+    if (this.props.history.replace.name == "replace" && this.props.isLoggedIn) {
+      if (this.props.location.state) {
+        let path = this.props.location.state.from;
+        return (
+          <Redirect
+            to={{
+              pathname: path,
+              state: { from: this.props.location.pathname },
+            }}
+          />
+        );
+      }
+    }
+    if (this.props.isLoggedIn) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/profile",
+            state: { from: this.props.location.pathname },
+          }}
+        />
+      );
     }
     return (
       <div className="login_page">
@@ -130,7 +148,7 @@ export class Login extends Component {
 
 const mapStateToProps = (state) => ({
   errorMsg: state.userReducer.errorMsg,
-  isLoggedIn: state.userReducer.isLoggedIn,
+  isLoggedIn: state.loadingReducer.isLoggedIn,
 });
 
 export default connect(mapStateToProps, { userLogin, clearningErrors })(

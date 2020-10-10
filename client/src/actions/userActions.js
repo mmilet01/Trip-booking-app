@@ -105,7 +105,6 @@ export const fetchUser = (id) => (dispatch) => {
       dispatch({
         type: LOADING_USER_FAILED,
       });
-      console.log("Failure catching user profile", err.response);
     });
 };
 

@@ -100,7 +100,6 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  console.log(req.body);
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(500).json({

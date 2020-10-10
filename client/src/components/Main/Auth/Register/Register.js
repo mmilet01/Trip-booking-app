@@ -14,7 +14,7 @@ export class Register extends Component {
       email: "",
       emailError: "",
       password: "",
-      passwordError: ""
+      passwordError: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
@@ -23,21 +23,21 @@ export class Register extends Component {
     const { value, name } = e.target;
     this.setState({
       ...this.state,
-      [name]: value
+      [name]: value,
     });
   }
   validate() {
     if (!this.state.email.includes("@")) {
       this.setState({
         ...this.state,
-        emailError: "Email must include @"
+        emailError: "Email must include @",
       });
       return false;
     } else if (this.state.password.length < 5) {
       this.setState({
         ...this.state,
         emailError: "",
-        passwordError: "Password needs to be atleast 6 characters long"
+        passwordError: "Password needs to be atleast 6 characters long",
       });
       return false;
     } else if (this.state.fullname.length < 3) {
@@ -45,7 +45,7 @@ export class Register extends Component {
         ...this.state,
         emailError: "",
         passwordError: "",
-        fullnameError: "Please enter your full name"
+        fullnameError: "Please enter your full name",
       });
       return false;
     }
@@ -53,14 +53,12 @@ export class Register extends Component {
       ...this.state,
       fullnameError: "",
       emailError: "",
-      passwordError: ""
+      passwordError: "",
     });
     return true;
   }
   formSubmit(e) {
     e.preventDefault();
-    console.log("submitting register");
-    console.log(this.state);
     this.props.clearningErrors();
 
     const isValid = this.validate();
@@ -75,7 +73,14 @@ export class Register extends Component {
 
   render() {
     if (this.props.isLoggedIn) {
-      return <Redirect to="/profile" />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/profile",
+            state: { from: this.props.location.pathname },
+          }}
+        />
+      );
     }
     return (
       <div className="register_page">
@@ -143,12 +148,11 @@ export class Register extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   errorMsg: state.userReducer.errorMsg,
-  isLoggedIn: state.userReducer.isLoggedIn
+  isLoggedIn: state.loadingReducer.isLoggedIn,
 });
 
-export default connect(
-  mapStateToProps,
-  { userRegister, clearningErrors }
-)(withRouter(Register));
+export default connect(mapStateToProps, { userRegister, clearningErrors })(
+  withRouter(Register)
+);

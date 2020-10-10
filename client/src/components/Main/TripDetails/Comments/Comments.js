@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Comments.css";
 
-function Comments(props) {
+const Comments = (props) => {
   return (
     <div className="comment_section">
       {props.comments.length > 0 ? (
@@ -42,6 +42,6 @@ function Comments(props) {
       )}
     </div>
   );
-}
+};
 
 export default Comments;

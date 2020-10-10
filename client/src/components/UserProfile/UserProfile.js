@@ -17,10 +17,7 @@ const UserProfile = () => {
   const fetchingUserTrips = useSelector(
     (state) => state.loadingReducer.loadingUserTrips
   );
-  const loadingCurrentUser = useSelector(
-    (state) => state.loadingReducer.loadingCurrentUser
-  );
-  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const user = useSelector((state) => state.userReducer.user);
   const fetchedUser = useSelector((state) => state.userReducer.fetchedUser);
   const trips = useSelector((state) => state.tripReducer.user_trips);
@@ -35,13 +32,12 @@ const UserProfile = () => {
     window.scrollTo(0, 0);
     dispatch(fetchUser(userID));
     dispatch(fetchUserTrips(userID));
-    fetchUserTrips(userID);
     return () => {
       clearUser();
     };
   }, [userID, fetchUser, fetchUserTrips]);
 
-  if (loadingCurrentUser) {
+  if (fetchingUserTrips || loadingUserData) {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
@@ -54,10 +50,6 @@ const UserProfile = () => {
         }}
       />
     );
-  }
-
-  if (fetchingUserTrips || loadingUserData) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
   if (user.id === userID) {

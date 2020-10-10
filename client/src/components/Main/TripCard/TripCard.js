@@ -14,7 +14,7 @@ const override = css`
 `;
 
 const TripCard = (props) => {
-  const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const dispatch = useDispatch();
   const likingInProgress = useSelector(
     (state) => state.loadingReducer.likingInProgress

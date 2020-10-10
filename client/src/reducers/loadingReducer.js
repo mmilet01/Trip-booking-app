@@ -20,9 +20,13 @@ import {
   ADDING_LIKE_FAILED,
   REMOVED_LIKE_SUCCESSFULLY,
   REMOVE_LIKE_FAILED,
+  USER_LOGIN_SUCCESSFULLY,
+  USER_REGISTERED_SUCCESSFULLY,
+  USER_LOGOUT,
 } from "../constants/actions";
 
 const initialState = {
+  isLoggedIn: false,
   loadingSingleTrip: false,
   loadingTrips: false,
   loadingUserTrips: false,
@@ -59,15 +63,28 @@ export default function (state = initialState, action) {
         ...state,
         loadingUserData: false,
       };
+    case USER_LOGOUT:
+      return {
+        ...state,
+        isLoggedIn: false,
+      };
     case LOADING_CURRENT_USER:
       return {
         ...state,
         loadingCurrentUser: true,
       };
     case USER_LOADED_FAIL:
-    case USER_LOADED_SUCCESSFULLY:
       return {
         ...state,
+        isLoggedIn: false,
+        loadingCurrentUser: false,
+      };
+    case USER_LOADED_SUCCESSFULLY:
+    case USER_LOGIN_SUCCESSFULLY:
+    case USER_REGISTERED_SUCCESSFULLY:
+      return {
+        ...state,
+        isLoggedIn: true,
         loadingCurrentUser: false,
       };
     case LOADING_TRIPS_FAILED:
