@@ -7,7 +7,6 @@ import {
   fetchSingleTrip,
   deleteTrip,
   clearTrip,
-  addComment,
 } from "../../../actions/tripActions";
 import Comments from "./Comments/Comments.js";
 import { css } from "@emotion/core";
@@ -21,12 +20,10 @@ const override = css`
 
 const TripDetails = () => {
   const tripID = +useParams().id;
-  const [comment, setComment] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((state) => state.userReducer.user);
   const trip = useSelector((state) => state.tripReducer.trip);
-  const comments = useSelector((state) => state.tripReducer.comments);
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loadingSingleTrip = useSelector(
     (state) => state.loadingReducer.loadingSingleTrip
@@ -45,19 +42,9 @@ const TripDetails = () => {
     dispatch(deleteTrip(tripID, history));
   };
 
-  const handleChange = (e) => {
-    setComment(e.target.value);
-  };
-
   const addDefaultSrc = (e) => {
     e.target.onError = null;
     e.target.src = "http://localhost:5000/uploads/default_image.jpg";
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    dispatch(addComment(tripID, comment));
-    setComment("");
   };
 
   if (loadingSingleTrip) {
@@ -149,13 +136,7 @@ const TripDetails = () => {
         </div>
       ) : null}
       <hr />
-      <Comments
-        comments={comments}
-        onSubmit={onSubmit}
-        handleChange={handleChange}
-        comment={comment}
-        isLoggedIn={isLoggedIn}
-      />
+      <Comments />
     </div>
   );
 };

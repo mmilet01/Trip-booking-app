@@ -10,10 +10,10 @@ export class HomePage extends Component {
   }
   render() {
     let sortedTrips = this.props.trips.sort((a, b) => {
-      return b.likes.length - a.likes.length;
+      return b.comments.length - a.comments.length;
     });
     sortedTrips = sortedTrips.slice(0, 5);
-    let trips = sortedTrips.map(trip => {
+    let trips = sortedTrips.map((trip) => {
       return (
         <TripCard key={trip.id} trip={trip} user={this.props.user}></TripCard>
       );
@@ -34,14 +34,11 @@ export class HomePage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   trips: state.tripReducer.trips,
-  user: state.userReducer.user
+  user: state.userReducer.user,
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    fetchTrips
-  }
-)(HomePage);
+export default connect(mapStateToProps, {
+  fetchTrips,
+})(HomePage);

@@ -5,8 +5,6 @@ import {
   TRIP_EDITED_SUCCESSFULLY,
   CLEAR_TRIP,
   COMMENT_POSTED_SUCCESSFULLY,
-  LIKE_ADDED_SUCCESSFULLY,
-  REMOVED_LIKE_SUCCESSFULLY,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
 } from "../constants/actions";
 
@@ -55,12 +53,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         comments: [...state.comments, action.payload],
-      };
-    case REMOVED_LIKE_SUCCESSFULLY:
-    case LIKE_ADDED_SUCCESSFULLY:
-      return {
-        ...state,
-        trips: action.payload,
       };
     default:
       return state;

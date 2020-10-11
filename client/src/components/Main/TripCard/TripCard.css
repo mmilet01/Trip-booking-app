@@ -22,12 +22,6 @@
   justify-content: flex-start;
 }
 
-.noviLajk {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
 .tripp {
   display: flex;
   flex-direction: column;
@@ -142,22 +136,6 @@
 
 .info2 a {
   width: 40%;
-}
-.lajk {
-  padding-right: 10px;
-  color: #333;
-}
-
-.liked {
-  color: blue;
-}
-
-.plikes {
-  color: blue;
-}
-.plikes:hover {
-  text-decoration: underline;
-  cursor: pointer;
 }
 
 #modal button {

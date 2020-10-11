@@ -62,13 +62,11 @@ router.post("/", upload.single("tripImage"), auth, (req, res) => {
   }
   const freespace = +req.body.space;
   const createdBy = req.user.fullname;
-  const likes = [];
   const comments = [];
   data = {
     ...data,
     freespace,
     createdBy,
-    likes,
     comments,
     price: +req.body.price,
     UserId: req.user.id,
@@ -99,54 +97,6 @@ router.get("/userTrips/:id", (req, res) => {
     return res.status(200).json(trips);
   });
 });
-
-router.post("/like/:id", auth, (req, res) => {
-  const id = req.params.id;
-  Trip.findOne({ where: { id: id } })
-    .then((trip) => {
-      trip.dataValues.likes.push({
-        userName: req.user.fullname,
-        id: req.user.id,
-        userProfileImage: "what",
-      });
-      Trip.update(trip.dataValues, { where: { id: id } })
-        .then(() => {
-          return res.status(200).json(trip);
-        })
-        .catch((err) => {
-          return res.status(500).json({ msg: "FAILED", err });
-        });
-    })
-    .catch((err) => {
-      return res
-        .status(500)
-        .json({ msg: "Failed to find trip with that id", err });
-    });
-});
-
-router.post("/unlike/:id", auth, (req, res) => {
-  const id = req.params.id;
-  Trip.findOne({ where: { id: id } })
-    .then((trip) => {
-      const updatedTrip = trip;
-      updatedTrip.dataValues.likes = trip.dataValues.likes.filter((likedBy) => {
-        return likedBy.id != req.user.id;
-      });
-      Trip.update(updatedTrip.dataValues, { where: { id: id } })
-        .then(() => {
-          return res.status(200).json(trip);
-        })
-        .catch((err) => {
-          return res.status(500).json({ msg: "FAILED", err });
-        });
-    })
-    .catch((err) => {
-      return res
-        .status(500)
-        .json({ msg: "Failed to find trip with that id", err });
-    });
-});
-
 router.post("/comment/:id", auth, (req, res) => {
   const id = req.params.id;
   Trip.findOne({ where: { id: id } }).then((trip) => {

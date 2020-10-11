@@ -17,15 +17,9 @@ import {
   SINGLE_TRIP_FETCHED_SUCCESSFULLY,
   TRIPS_FETCHED_SUCCESSFULLY,
   LOAD_USER_TRIPS_FAILED,
-  ADDING_LIKE,
-  LIKE_ADDED_SUCCESSFULLY,
-  ADDING_LIKE_FAILED,
   LOAD_USER_TRIPS,
   TRIP_CREATED_SUCCESSFULLY,
   COMMENT_POSTED_SUCCESSFULLY,
-  REMOVED_LIKE_SUCCESSFULLY,
-  REMOVING_LIKE,
-  REMOVE_LIKE_FAILED,
   CREATING_TRIP,
 } from "../constants/actions";
 import axios from "axios";
@@ -135,48 +129,6 @@ export const addComment = (id, comment) => (dispatch) => {
     })
     .catch((err) => {
       dispatch({ type: POSTING_COMMENT_FAILED });
-    });
-};
-
-export const addLike = (id) => (dispatch, getState) => {
-  dispatch({ type: ADDING_LIKE });
-  axios
-    .post("/api/trips/like/" + id, null)
-    .then((res) => {
-      let newTrips = getState().tripReducer.trips.map((trip) => {
-        if (trip.id == res.data.id) {
-          trip = res.data;
-        }
-        return trip;
-      });
-      dispatch({
-        type: LIKE_ADDED_SUCCESSFULLY,
-        payload: newTrips,
-      });
-    })
-    .catch((err) => {
-      dispatch({ ADDING_LIKE_FAILED });
-    });
-};
-
-export const removeLike = (id) => (dispatch, getState) => {
-  dispatch({ type: REMOVING_LIKE });
-  axios
-    .post("/api/trips/unlike/" + id, null)
-    .then((res) => {
-      let newTrips = getState().tripReducer.trips.map((trip) => {
-        if (trip.id == res.data.id) {
-          trip = res.data;
-        }
-        return trip;
-      });
-      dispatch({
-        type: REMOVED_LIKE_SUCCESSFULLY,
-        payload: newTrips,
-      });
-    })
-    .catch((err) => {
-      dispatch({ REMOVE_LIKE_FAILED });
     });
 };
 

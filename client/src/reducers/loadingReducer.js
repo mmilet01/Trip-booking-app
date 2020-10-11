@@ -14,15 +14,11 @@ import {
   USER_LOADED_FAIL,
   LOAD_USER_TRIPS_FAILED,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
-  LIKE_ADDED_SUCCESSFULLY,
-  ADDING_LIKE,
-  REMOVING_LIKE,
-  ADDING_LIKE_FAILED,
-  REMOVED_LIKE_SUCCESSFULLY,
-  REMOVE_LIKE_FAILED,
   USER_LOGIN_SUCCESSFULLY,
   USER_REGISTERED_SUCCESSFULLY,
   USER_LOGOUT,
+  USER_LOGIN_FAIL,
+  USER_LOGIN_START,
 } from "../constants/actions";
 
 const initialState = {
@@ -32,7 +28,7 @@ const initialState = {
   loadingUserTrips: false,
   loadingUserData: false,
   loadingCurrentUser: false,
-  likingInProgress: false,
+  loggingInUser: false,
 };
 
 export default function (state = initialState, action) {
@@ -68,6 +64,11 @@ export default function (state = initialState, action) {
         ...state,
         isLoggedIn: false,
       };
+    case USER_LOGIN_START:
+      return {
+        ...state,
+        loggingInUser: true,
+      };
     case LOADING_CURRENT_USER:
       return {
         ...state,
@@ -79,8 +80,18 @@ export default function (state = initialState, action) {
         isLoggedIn: false,
         loadingCurrentUser: false,
       };
-    case USER_LOADED_SUCCESSFULLY:
+    case USER_LOGIN_FAIL:
+      return {
+        ...state,
+        loggingInUser: false,
+      };
     case USER_LOGIN_SUCCESSFULLY:
+      return {
+        ...state,
+        isLoggedIn: true,
+        loggingInUser: false,
+      };
+    case USER_LOADED_SUCCESSFULLY:
     case USER_REGISTERED_SUCCESSFULLY:
       return {
         ...state,
@@ -104,20 +115,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingUserTrips: false,
-      };
-    case ADDING_LIKE:
-    case REMOVING_LIKE:
-      return {
-        ...state,
-        likingInProgress: true,
-      };
-    case LIKE_ADDED_SUCCESSFULLY:
-    case ADDING_LIKE_FAILED:
-    case REMOVE_LIKE_FAILED:
-    case REMOVED_LIKE_SUCCESSFULLY:
-      return {
-        ...state,
-        likingInProgress: false,
       };
     default:
       return state;

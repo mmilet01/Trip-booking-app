@@ -1,156 +1,134 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
-import { Link, withRouter, Redirect } from "react-router-dom";
-
-import { connect } from "react-redux";
+import {
+  Link,
+  withRouter,
+  Redirect,
+  useLocation,
+  useHistory,
+} from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { userLogin, clearningErrors } from "../../../../actions/userActions";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
 
-export class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-      emailError: "",
-      passwordError: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.formSubmit = this.formSubmit.bind(this);
-  }
+const override = css`
+  display: block;
+  margin: 2px auto;
+  border-color: red;
+`;
 
-  handleChange(e) {
-    const { value, name } = e.target;
-    this.setState({
-      ...this.state,
-      [name]: value,
-    });
-  }
+const Login = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const history = useHistory();
 
-  validate() {
-    if (!this.state.email.includes("@")) {
-      this.setState({
-        ...this.state,
-        emailError: "Email must include @",
-        loading: false,
-      });
-      return false;
-    } else if (this.state.password.length < 5) {
-      this.setState({
-        ...this.state,
-        emailError: "",
-        passwordError: "Password needs to be atleast 6 characters long",
-        loading: false,
-      });
+  const errorMsg = useSelector((state) => state.userReducer.errorMsg);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
+  const loggingInUser = useSelector(
+    (state) => state.loadingReducer.loggingInUser
+  );
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  const validate = () => {
+    if (!email.includes("@")) {
+      setEmailError("Email must include @");
       return false;
     }
-    this.setState({
-      ...this.state,
-      emailError: "",
-      passwordError: "",
-    });
+    setEmailError("");
     return true;
-  }
-  componentDidMount() {
-    this.props.clearningErrors();
-  }
+  };
 
-  formSubmit(e) {
+  useEffect(() => {
+    dispatch(clearningErrors());
+    return () => {};
+  }, [dispatch, clearningErrors]);
+
+  const formSubmit = (e) => {
     e.preventDefault();
 
-    this.props.clearningErrors();
-    const isValid = this.validate();
+    dispatch(clearningErrors());
+    const isValid = validate();
 
     if (isValid) {
-      this.props.userLogin(this.state);
-      this.setState({
-        ...this.state,
-        loading: false,
-        passwordError: "",
-      });
+      const state = { email, password };
+      dispatch(userLogin(state));
     }
-  }
+  };
 
-  render() {
-    if (this.props.history.replace.name == "replace" && this.props.isLoggedIn) {
-      if (this.props.location.state) {
-        let path = this.props.location.state.from;
-        return (
-          <Redirect
-            to={{
-              pathname: path,
-              state: { from: this.props.location.pathname },
-            }}
-          />
-        );
-      }
-    }
-    if (this.props.isLoggedIn) {
+  if (history.replace.name == "replace" && isLoggedIn) {
+    if (location.state) {
+      let path = location.state.from;
       return (
         <Redirect
           to={{
-            pathname: "/profile",
-            state: { from: this.props.location.pathname },
+            pathname: path,
+            state: { from: location.pathname },
           }}
         />
       );
     }
+  }
+  if (isLoggedIn) {
     return (
-      <div className="login_page">
-        <div className="login_form">
-          <h1>Login form:</h1>
-          <div className="form_wrapper">
-            <form className="form" onSubmit={this.formSubmit}>
-              <label>
-                <input
-                  className="userInput"
-                  type="text"
-                  placeholder="Enter your email"
-                  name="email"
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-              </label>
-
-              <label>
-                <input
-                  className="userInput"
-                  type="password"
-                  placeholder="Password"
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                />
-              </label>
-              {this.state.passwordError ? (
-                <p style={{ color: "red" }}>{this.state.passwordError}</p>
-              ) : null}
-              {this.state.emailError ? (
-                <p style={{ color: "red" }}>{this.state.emailError}</p>
-              ) : null}
-              {this.props.errorMsg ? (
-                <p style={{ color: "red" }}>{this.props.errorMsg}</p>
-              ) : null}
-              <button className="login_button" onClick={this.formSubmit}>
-                LOGIN
-              </button>
-              <div className="signup">
-                <Link to="/register" className="signup">
-                  Dont have an account? Sign up !
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      <Redirect
+        to={{
+          pathname: "/profile",
+          state: { from: location.pathname },
+        }}
+      />
     );
   }
-}
+  return (
+    <div className="login_page">
+      <div className="login_form">
+        <h1>Login form:</h1>
+        <div className="form_wrapper">
+          <form className="form" onSubmit={formSubmit}>
+            <label>
+              <input
+                className="userInput"
+                type="text"
+                placeholder="Enter your email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label>
+              <input
+                className="userInput"
+                type="password"
+                placeholder="Password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            {emailError ? <p style={{ color: "red" }}>{emailError}</p> : null}
+            {errorMsg ? <p style={{ color: "red" }}>{errorMsg}</p> : null}
+            {loggingInUser ? (
+              <div className="login_button">
+                <ClipLoader css={override} size={15} color={"#123abc"} />
+              </div>
+            ) : (
+              <button className="login_button" onClick={formSubmit}>
+                LOGIN
+              </button>
+            )}
+            <div className="signup">
+              <Link to="/register" className="signup">
+                Dont have an account? Sign up !
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  errorMsg: state.userReducer.errorMsg,
-  isLoggedIn: state.loadingReducer.isLoggedIn,
-});
-
-export default connect(mapStateToProps, { userLogin, clearningErrors })(
-  withRouter(Login)
-);
+export default withRouter(Login);

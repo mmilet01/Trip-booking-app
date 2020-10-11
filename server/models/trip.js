@@ -11,14 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       location: DataTypes.STRING,
       price: DataTypes.DOUBLE,
       image: DataTypes.STRING,
-      likes: DataTypes.ARRAY(DataTypes.JSON),
       comments: DataTypes.ARRAY(DataTypes.JSON),
-      createdBy: DataTypes.STRING
+      createdBy: DataTypes.STRING,
     },
 
     {}
   );
-  Trip.associate = function(models) {
+  Trip.associate = function (models) {
     // associations can be defined here
     Trip.belongsTo(models.User);
   };

@@ -6,57 +6,54 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       freespace: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       start_hour: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       end_hour: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       location: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       price: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE,
       },
       image: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       createdBy: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      },
-      likes: {
-        type: Sequelize.ARRAY(Sequelize.JSON)
+        type: Sequelize.DATE,
       },
       comments: { type: Sequelize.ARRAY(Sequelize.JSON) },
       UserId: {
         type: Sequelize.INTEGER,
         model: "users", // <<< Note, its table's name, not object name
-        key: "id" // <<< Note, its a column name
-      }
+        key: "id", // <<< Note, its a column name
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("Trips");
-  }
+  },
 };

@@ -4,21 +4,36 @@ import { Link } from "react-router-dom";
 import { Redirect, useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../../actions/userActions";
-import { fetchTrips } from "../../../actions/tripActions";
+import { fetchUserTrips } from "../../../actions/tripActions";
 import TripCard from "../TripCard/TripCard.js";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override = css`
+  display: block;
+  margin: 10% auto;
+  border-color: red;
+`;
 
 const Profile = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const trips = useSelector((state) => state.tripReducer.trips);
+  const user_trips = useSelector((state) => state.tripReducer.user_trips);
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
+  const loadingUserTrips = useSelector(
+    (state) => state.loadingReducer.loadingUserTrips
+  );
   const user = useSelector((state) => state.userReducer.user);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    dispatch(fetchTrips());
+    if (user) dispatch(fetchUserTrips(user.id));
     return () => {};
-  }, [fetchTrips]);
+  }, [fetchUserTrips]);
+
+  if (loadingUserTrips) {
+    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+  }
 
   if (!isLoggedIn) {
     return (
@@ -32,17 +47,11 @@ const Profile = () => {
   }
 
   let myTrips = [];
-  let fullname = "";
-  let email = "";
 
   if (isLoggedIn) {
-    myTrips = trips
-      .filter((trip) => {
-        return trip.UserId === user.id;
-      })
-      .map((trip) => {
-        return <TripCard key={trip.id} trip={trip} user={user}></TripCard>;
-      });
+    myTrips = user_trips.map((trip) => {
+      return <TripCard key={trip.id} trip={trip} user={user}></TripCard>;
+    });
 
     myTrips.push(
       <div className="tripp" id="addCard">
@@ -52,10 +61,6 @@ const Profile = () => {
         </Link>
       </div>
     );
-    if (!!user) {
-      fullname = user.fullname;
-      email = user.email;
-    }
   }
   return (
     <div className="profilContainer">
@@ -70,10 +75,10 @@ const Profile = () => {
         </div>
         <div className="profilInfo1">
           <p>
-            <b>Name</b>: {fullname}
+            <b>Name</b>: {user.fullname}
           </p>
           <p>
-            <b>Contact</b>: {email}
+            <b>Contact</b>: {user.email}
           </p>
         </div>
       </div>

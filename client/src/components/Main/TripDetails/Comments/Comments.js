@@ -1,12 +1,31 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import "./Comments.css";
+import { useDispatch, useSelector } from "react-redux";
+import { addComment } from "../../../../actions/tripActions";
+import { useParams } from "react-router-dom";
 
-const Comments = (props) => {
+const Comments = () => {
+  const dispatch = useDispatch();
+  const comments = useSelector((state) => state.tripReducer.comments);
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
+  const [comment, setComment] = useState("");
+  const tripID = +useParams().id;
+
+  const handleChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addComment(tripID, comment));
+    setComment("");
+  };
+
   return (
     <div className="comment_section">
-      {props.comments.length > 0 ? (
+      {comments.length > 0 ? (
         <div>
-          {props.comments.map((comment, index) => {
+          {comments.map((comment, index) => {
             return (
               <div key={index}>
                 <h4>{comment.userName}</h4>
@@ -20,26 +39,22 @@ const Comments = (props) => {
         <p>No comments yet, start by posting one!</p>
       )}
 
-      {!props.loading ? (
-        <form onSubmit={props.onSubmit}>
+      {isLoggedIn ? (
+        <form onSubmit={onSubmit}>
           <div className="komentar">
             <textarea
-              disabled={!props.isLoggedIn}
+              disabled={!isLoggedIn}
               className="text_area2"
-              onChange={props.handleChange}
-              value={props.comment}
+              onChange={handleChange}
+              value={comment}
               placeholder={
-                !props.isLoggedIn ? "Logg In To Comment" : "Write a comment..."
+                !isLoggedIn ? "Logg In To Comment" : "Write a comment..."
               }
             ></textarea>
-            <button disabled={!props.isLoggedIn} className="bookNow">
-              Submit comment
-            </button>
+            <button className="bookNow">Submit comment</button>
           </div>
         </form>
-      ) : (
-        <h1>Loading...</h1>
-      )}
+      ) : null}
     </div>
   );
 };
