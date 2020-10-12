@@ -53,7 +53,9 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", upload.single("tripImage"), auth, (req, res) => {
-  let data = ({ name, description, location, start_hour, end_hour } = req.body);
+  console.log("Endpoint hit", req.body);
+  console.log(req.file);
+  let data = ({ name, description, location } = req.body);
   if (!!req.file) {
     data = {
       ...data,

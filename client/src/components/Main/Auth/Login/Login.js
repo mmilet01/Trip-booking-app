@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { userLogin, clearningErrors } from "../../../../actions/userActions";
 import { css } from "@emotion/core";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useForm } from "react-hook-form";
 
 const override = css`
   display: block;
@@ -23,40 +24,20 @@ const Login = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const errorMsg = useSelector((state) => state.userReducer.errorMsg);
+  const { register, handleSubmit, watch, errors } = useForm();
+
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loggingInUser = useSelector(
     (state) => state.loadingReducer.loggingInUser
   );
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-
-  const validate = () => {
-    if (!email.includes("@")) {
-      setEmailError("Email must include @");
-      return false;
-    }
-    setEmailError("");
-    return true;
-  };
 
   useEffect(() => {
     dispatch(clearningErrors());
     return () => {};
   }, [dispatch, clearningErrors]);
 
-  const formSubmit = (e) => {
-    e.preventDefault();
-
-    dispatch(clearningErrors());
-    const isValid = validate();
-
-    if (isValid) {
-      const state = { email, password };
-      dispatch(userLogin(state));
-    }
+  const onSubmit = (data) => {
+    dispatch(userLogin(data));
   };
 
   if (history.replace.name == "replace" && isLoggedIn) {
@@ -87,35 +68,38 @@ const Login = () => {
       <div className="login_form">
         <h1>Login form:</h1>
         <div className="form_wrapper">
-          <form className="form" onSubmit={formSubmit}>
-            <label>
-              <input
-                className="userInput"
-                type="text"
-                placeholder="Enter your email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
-            <label>
-              <input
-                className="userInput"
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </label>
-            {emailError ? <p style={{ color: "red" }}>{emailError}</p> : null}
-            {errorMsg ? <p style={{ color: "red" }}>{errorMsg}</p> : null}
+          <form className="form" onSubmit={handleSubmit(onSubmit)}>
+            <input
+              className="userInput"
+              name="email"
+              placeholder="Email"
+              ref={register({
+                required: true,
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                },
+              })}
+            />
+            <input
+              className="userInput"
+              name="password"
+              placeholder="Password"
+              type="password"
+              ref={register({ required: true })}
+            />
+            {errors.email?.type === "required" && (
+              <p style={{ color: "red" }}>Enter email</p>
+            )}
+            {errors.email?.type === "pattern" && (
+              <p style={{ color: "red" }}>Invalid email address</p>
+            )}
+            {errors.password && <p style={{ color: "red" }}>Enter password</p>}
             {loggingInUser ? (
               <div className="login_button">
                 <ClipLoader css={override} size={15} color={"#123abc"} />
               </div>
             ) : (
-              <button className="login_button" onClick={formSubmit}>
+              <button type="submit" className="login_button">
                 LOGIN
               </button>
             )}

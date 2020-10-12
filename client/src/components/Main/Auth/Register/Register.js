@@ -1,158 +1,113 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import "./Register.css";
-import { Link, Redirect, withRouter } from "react-router-dom";
-
-import { connect } from "react-redux";
+import { Link, Redirect, withRouter, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { userRegister, clearningErrors } from "../../../../actions/userActions";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useForm } from "react-hook-form";
+import { css } from "@emotion/core";
 
-export class Register extends Component {
-  constructor() {
-    super();
-    this.state = {
-      fullname: "",
-      fullnameError: "",
-      email: "",
-      emailError: "",
-      password: "",
-      passwordError: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.formSubmit = this.formSubmit.bind(this);
-  }
-  handleChange(e) {
-    const { value, name } = e.target;
-    this.setState({
-      ...this.state,
-      [name]: value,
-    });
-  }
-  validate() {
-    if (!this.state.email.includes("@")) {
-      this.setState({
-        ...this.state,
-        emailError: "Email must include @",
-      });
-      return false;
-    } else if (this.state.password.length < 5) {
-      this.setState({
-        ...this.state,
-        emailError: "",
-        passwordError: "Password needs to be atleast 6 characters long",
-      });
-      return false;
-    } else if (this.state.fullname.length < 3) {
-      this.setState({
-        ...this.state,
-        emailError: "",
-        passwordError: "",
-        fullnameError: "Please enter your full name",
-      });
-      return false;
-    }
-    this.setState({
-      ...this.state,
-      fullnameError: "",
-      emailError: "",
-      passwordError: "",
-    });
-    return true;
-  }
-  formSubmit(e) {
-    e.preventDefault();
-    this.props.clearningErrors();
+const override = css`
+  display: block;
+  margin: 2px auto;
+  border-color: red;
+`;
 
-    const isValid = this.validate();
-    if (isValid) {
-      this.props.userRegister(this.state);
-    }
-  }
+const Register = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-  componentDidMount() {
-    this.props.clearningErrors();
-  }
+  const { register, handleSubmit, watch, errors } = useForm();
+  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
+  const loggingInUser = useSelector(
+    (state) => state.loadingReducer.loggingInUser
+  );
 
-  render() {
-    if (this.props.isLoggedIn) {
-      return (
-        <Redirect
-          to={{
-            pathname: "/profile",
-            state: { from: this.props.location.pathname },
-          }}
-        />
-      );
-    }
+  useEffect(() => {
+    dispatch(clearningErrors());
+    return () => {};
+  }, [dispatch]);
+
+  const onSubmit = (data) => {
+    dispatch(userRegister(data));
+  };
+
+  if (isLoggedIn) {
     return (
-      <div className="register_page">
-        <div className="login_form">
-          <h1>Register form:</h1>
-          <div className="form_wrapper">
-            <form className="form" onSubmit={this.formSubmit}>
-              <label>
-                <input
-                  className="userInput"
-                  type="text"
-                  placeholder="Fullname"
-                  name="fullname"
-                  value={this.state.fullname}
-                  onChange={this.handleChange}
-                />
-              </label>
-
-              <label>
-                <input
-                  className="userInput"
-                  type="email"
-                  placeholder="Enter your email"
-                  name="email"
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-              </label>
-
-              <label>
-                <input
-                  className="userInput"
-                  type="password"
-                  placeholder="Password"
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                />
-              </label>
-              {this.state.passwordError ? (
-                <p style={{ color: "red" }}>{this.state.passwordError}</p>
-              ) : null}
-              {this.state.emailError ? (
-                <p style={{ color: "red" }}>{this.state.emailError}</p>
-              ) : null}
-              {this.state.fullnameError ? (
-                <p style={{ color: "red" }}>{this.state.fullnameError}</p>
-              ) : null}
-              {this.props.errorMsg ? (
-                <p style={{ color: "red" }}>{this.props.errorMsg}</p>
-              ) : null}
-              <button className="login_button" onClick={this.formSubmit}>
-                REGISTER
-              </button>
-              <div className="signup">
-                <Link to="/login" className="signup">
-                  Already a member? Login !
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      <Redirect
+        to={{
+          pathname: "/profile",
+          state: { from: location.pathname },
+        }}
+      />
     );
   }
-}
+  return (
+    <div className="register_page">
+      <div className="login_form">
+        <h1>Register form:</h1>
+        <div className="form_wrapper">
+          <form className="form" onSubmit={handleSubmit(onSubmit)}>
+            <input
+              className="userInput"
+              name="fullname"
+              placeholder="Full name"
+              ref={register({
+                required: true,
+              })}
+            />
+            <input
+              className="userInput"
+              name="email"
+              placeholder="Email"
+              ref={register({
+                required: true,
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                },
+              })}
+            />
+            <input
+              className="userInput"
+              name="password"
+              placeholder="Password"
+              type="password"
+              ref={register({ required: true, minLength: 5 })}
+            />
 
-const mapStateToProps = (state) => ({
-  errorMsg: state.userReducer.errorMsg,
-  isLoggedIn: state.loadingReducer.isLoggedIn,
-});
+            {errors.email?.type === "required" && (
+              <p style={{ color: "red" }}>Enter email</p>
+            )}
+            {errors.email?.type === "pattern" && (
+              <p style={{ color: "red" }}>Invalid email address</p>
+            )}
+            {errors.password?.type === "required" && (
+              <p style={{ color: "red" }}>Enter password</p>
+            )}
+            {errors.password?.type === "minLength" && (
+              <p style={{ color: "red" }}>
+                Password must be atleast 5 characters long
+              </p>
+            )}
+            {loggingInUser ? (
+              <div className="login_button">
+                <ClipLoader css={override} size={15} color={"#123abc"} />
+              </div>
+            ) : (
+              <button type="submit" className="login_button">
+                REGISTER
+              </button>
+            )}
+            <div className="signup">
+              <Link to="/login" className="signup">
+                Already a member? Login !
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default connect(mapStateToProps, { userRegister, clearningErrors })(
-  withRouter(Register)
-);
+export default withRouter(Register);

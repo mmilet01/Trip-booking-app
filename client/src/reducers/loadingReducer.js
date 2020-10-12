@@ -18,7 +18,9 @@ import {
   USER_REGISTERED_SUCCESSFULLY,
   USER_LOGOUT,
   USER_LOGIN_FAIL,
+  USER_REGISTER_FAIL,
   USER_LOGIN_START,
+  USER_REGISTER_START,
 } from "../constants/actions";
 
 const initialState = {
@@ -65,6 +67,7 @@ export default function (state = initialState, action) {
         isLoggedIn: false,
       };
     case USER_LOGIN_START:
+    case USER_REGISTER_START:
       return {
         ...state,
         loggingInUser: true,
@@ -81,18 +84,19 @@ export default function (state = initialState, action) {
         loadingCurrentUser: false,
       };
     case USER_LOGIN_FAIL:
+    case USER_REGISTER_FAIL:
       return {
         ...state,
         loggingInUser: false,
       };
     case USER_LOGIN_SUCCESSFULLY:
+    case USER_REGISTERED_SUCCESSFULLY:
       return {
         ...state,
         isLoggedIn: true,
         loggingInUser: false,
       };
     case USER_LOADED_SUCCESSFULLY:
-    case USER_REGISTERED_SUCCESSFULLY:
       return {
         ...state,
         isLoggedIn: true,

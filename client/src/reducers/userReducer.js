@@ -26,14 +26,11 @@ export default function (state = initialState, action) {
     case USER_LOADED_SUCCESSFULLY:
       return {
         ...state,
-        /*         isLoggedIn: true,
-         */ user: action.payload,
+        user: action.payload,
       };
     case USER_LOADED_FAIL:
       return {
         ...state,
-        /*         isLoggedIn: false,
-         */
       };
     case USER_FETCHED_SUCCESSFULLY:
       return {
@@ -43,15 +40,13 @@ export default function (state = initialState, action) {
     case USER_LOGOUT:
       return {
         ...state,
-        /*         isLoggedIn: false,
-         */ user: null,
+        user: null,
       };
     case USER_LOGIN_FAIL:
     case USER_REGISTER_FAIL:
       return {
         ...state,
-        /*         isLoggedIn: false,
-         */ user: null,
+        user: null,
         errorMsg: action.payload,
       };
     case CLEAR_USER:

@@ -1,178 +1,134 @@
-import React, { useState } from "react";
-import { withRouter, useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { withRouter, useHistory, useParams } from "react-router-dom";
 import "./CreateEditTrip.css";
-import { createTrip } from "../../../actions/tripActions";
-import TimePicker from "rc-time-picker";
-import "rc-time-picker/assets/index.css";
+import {
+  createTrip,
+  clearTrip,
+  fetchSingleTrip,
+} from "../../../actions/tripActions";
 import { useSelector, useDispatch } from "react-redux";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useForm, Controller } from "react-hook-form";
 
 const CreateEditTrip = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [start_hour, setStart_hour] = useState("");
-  const [end_hour, setEnd_hour] = useState("");
-  const [space, setSpace] = useState("");
-  const [price, setPrice] = useState("");
-  const [location, setLocation] = useState("");
-  const [tripImage, setTripImage] = useState("");
-  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const { register, handleSubmit, errors, control } = useForm();
+  const tripID = +useParams().id;
+  const [isEdit, setIsEdit] = useState(false);
+  const trip = useSelector((state) => state.tripReducer.trip);
 
-  const validator = () => {
-    if (
-      name &&
-      description &&
-      start_hour &&
-      end_hour &&
-      space &&
-      price &&
-      location &&
-      tripImage
-    ) {
-      return true;
-    } else {
-      setError("All fields and an image is REQUIRED");
+  const submitForm = (values) => {
+    const data = { ...values, tripImage: values.tripImage[0] };
+    let form_data = new FormData();
+
+    for (let key in data) {
+      form_data.append(key, data[key]);
     }
-    window.scroll(0, 0);
-    return false;
+    dispatch(createTrip(form_data, history));
   };
 
-  const handleChange = (e) => {
-    const { value, name } = e.target;
-    this.setState({
-      ...this.state,
-      [name]: value,
-    });
-  };
-
-  const handleDateChange = (dateName, dateValue) => {
-    if (dateName == "start_hour") {
-      setStart_hour(dateValue);
-    } else {
-      setEnd_hour(dateValue);
+  useEffect(() => {
+    if (tripID) {
+      setIsEdit(true);
+      dispatch(fetchSingleTrip(tripID));
     }
-  };
+    return () => {
+      dispatch(clearTrip());
+    };
+  }, [fetchSingleTrip, tripID]);
 
-  const fileChanged = (event) => {
-    console.log(event.target.files[0]);
-    setTripImage(event.target.files[0]);
-  };
-
-  const submitForm = (e) => {
-    e.preventDefault();
-    const isValid = validator();
-    if (isValid) {
-      let data = new FormData();
-      data.append("name", name);
-      data.append("description", description);
-      data.append("start_hour", start_hour);
-      data.append("end_hour", end_hour);
-      data.append("space", space);
-      data.append("price", price);
-      if (!!tripImage) {
-        data.append("tripImage", tripImage, "tripImage");
-      }
-      data.append("location", location);
-      dispatch(createTrip(data, history));
-    } else {
-      return;
-    }
-  };
   return (
     <div className="formContainer">
       <div className="headingCreate">
-        <p> CREATE YOUR OWN TRIP </p>
+        {isEdit ? <p>Edit trip</p> : <p>Create new trip</p>}
       </div>
-      {error ? (
-        <h4 style={{ textAlign: "center", color: "red" }}>{error}</h4>
-      ) : null}
       <form
         className="form"
-        onSubmit={submitForm}
+        onSubmit={handleSubmit(submitForm)}
         encType="multipart/form-data"
       >
-        <label>
-          <input
-            className="user_input"
-            type="text"
-            placeholder="Destination"
-            name="name"
-            value={name}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          <textarea
-            className="text_area"
-            type="text"
-            placeholder="Description"
-            name="description"
-            value={description}
-            onChange={handleChange}
-          />
-        </label>
-
+        <input
+          className="user_input"
+          type="text"
+          placeholder="Destination"
+          name="name"
+          defaultValue={isEdit ? trip.location : ""}
+          ref={register({ required: true })}
+        />
+        <textarea
+          className="text_area"
+          type="text"
+          placeholder="Description"
+          name="description"
+          defaultValue={isEdit ? trip.description : ""}
+          ref={register({ required: true })}
+        />
         <div>
-          <TimePicker
-            className="time"
-            placeholder="Starting time"
-            showSecond={false}
-            onChange={(time) => handleDateChange("start_hour", time)}
-            format="HH:mm"
+          <Controller
+            control={control}
+            name="ReactDatepickerstart"
+            ref={register({ required: true })}
+            render={({ onChange, onBlur, value }) => (
+              <ReactDatePicker
+                placeholderText="Date and time"
+                onChange={onChange}
+                onBlur={onBlur}
+                selected={value}
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+              />
+            )}
           />
-          <TimePicker
-            className="time"
-            placeholder="Ending time"
-            showSecond={false}
-            onChange={(time) => handleDateChange("end_hour", time)}
+          <Controller
+            control={control}
+            name="ReactDatepickerend"
+            ref={register({ required: true })}
+            render={({ onChange, onBlur, value }) => (
+              <ReactDatePicker
+                placeholderText="Date and time"
+                onChange={onChange}
+                onBlur={onBlur}
+                selected={value}
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+              />
+            )}
           />
         </div>
 
-        <label>
-          <input
-            className="user_input"
-            type="text"
-            placeholder="Available space"
-            name="space"
-            value={space}
-            onChange={handleChange}
-          />
+        <input
+          className="user_input"
+          type="number"
+          placeholder="Available space"
+          name="space"
+          defaultValue={isEdit ? trip.freespace : null}
+          ref={register({ required: true })}
+        />
+        <input
+          className="user_input"
+          type="number"
+          placeholder="Price per person"
+          name="price"
+          defaultValue={isEdit ? trip.price : null}
+          ref={register({ required: true })}
+        />
+        <label for="file-upload" className="custom-file-upload">
+          {isEdit ? (
+            <span>Select new image if you want to replace old one</span>
+          ) : (
+            <span>Select image</span>
+          )}
         </label>
-        <label>
-          <input
-            className="user_input"
-            type="text"
-            placeholder="Departure Location"
-            name="location"
-            value={location}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          <input
-            className="user_input"
-            type="text"
-            placeholder="Price per person"
-            name="price"
-            value={price}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label className="user_input">
-          Select an image that describes your trip the best
-          <input
-            className="user_input"
-            type="file"
-            name="tripImage"
-            /*               value={this.state.tripImage}
-             */ onChange={fileChanged}
-          />
-        </label>
-
-        <button className="bookNow" onSubmit={submitForm}>
-          CREATE
+        <input
+          id="file-upload"
+          type="file"
+          name="tripImage"
+          ref={register({ required: true })}
+        />
+        <button className="bookNow" type="submit">
+          {!isEdit ? <span>Create</span> : <span>Edit</span>}
         </button>
       </form>
     </div>
