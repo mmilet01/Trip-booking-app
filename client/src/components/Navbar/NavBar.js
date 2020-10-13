@@ -10,6 +10,7 @@ const NavBar = () => {
   const logout = (e) => {
     e.preventDefault();
     dispatch(userLogout());
+    window.location.reload();
   };
 
   const user = useSelector((state) => state.userReducer.user);

@@ -35,9 +35,9 @@ const Comments = () => {
             );
           })}
         </div>
-      ) : (
+      ) : isLoggedIn ? (
         <p>No comments yet, start by posting one!</p>
-      )}
+      ) : null}
 
       {isLoggedIn ? (
         <form onSubmit={onSubmit}>

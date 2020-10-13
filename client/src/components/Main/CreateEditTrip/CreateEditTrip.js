@@ -20,7 +20,14 @@ const CreateEditTrip = () => {
   const trip = useSelector((state) => state.tripReducer.trip);
 
   const submitForm = (values) => {
-    const data = { ...values, tripImage: values.tripImage[0] };
+    const startDate = new Date(values.start).toLocaleString();
+    const endDate = new Date(values.end).toLocaleString();
+    const data = {
+      ...values,
+      tripImage: values.tripImage[0],
+      start: startDate,
+      end: endDate,
+    };
     let form_data = new FormData();
 
     for (let key in data) {
@@ -52,9 +59,9 @@ const CreateEditTrip = () => {
         <input
           className="user_input"
           type="text"
-          placeholder="Destination"
+          placeholder="Name"
           name="name"
-          defaultValue={isEdit ? trip.location : ""}
+          defaultValue={isEdit ? trip.name : ""}
           ref={register({ required: true })}
         />
         <textarea
@@ -68,7 +75,7 @@ const CreateEditTrip = () => {
         <div>
           <Controller
             control={control}
-            name="ReactDatepickerstart"
+            name="start"
             ref={register({ required: true })}
             render={({ onChange, onBlur, value }) => (
               <ReactDatePicker
@@ -83,7 +90,7 @@ const CreateEditTrip = () => {
           />
           <Controller
             control={control}
-            name="ReactDatepickerend"
+            name="end"
             ref={register({ required: true })}
             render={({ onChange, onBlur, value }) => (
               <ReactDatePicker
@@ -112,6 +119,14 @@ const CreateEditTrip = () => {
           placeholder="Price per person"
           name="price"
           defaultValue={isEdit ? trip.price : null}
+          ref={register({ required: true })}
+        />
+        <input
+          className="user_input"
+          type="text"
+          placeholder="Destination"
+          name="location"
+          defaultValue={isEdit ? trip.location : null}
           ref={register({ required: true })}
         />
         <label for="file-upload" className="custom-file-upload">

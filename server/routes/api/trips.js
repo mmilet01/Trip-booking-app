@@ -53,23 +53,16 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", upload.single("tripImage"), auth, (req, res) => {
-  console.log("Endpoint hit", req.body);
-  console.log(req.file);
-  let data = ({ name, description, location } = req.body);
-  if (!!req.file) {
-    data = {
-      ...data,
-      image: req.file.path,
-    };
-  }
-  const freespace = +req.body.space;
-  const createdBy = req.user.fullname;
-  const comments = [];
-  data = {
-    ...data,
-    freespace,
-    createdBy,
-    comments,
+  const data = {
+    name: req.body.name,
+    description: req.body.description,
+    location: req.body.location,
+    freespace: +req.body.space,
+    createdBy: req.user.fullname,
+    comments: [],
+    end_hour: req.body.end,
+    start_hour: req.body.start,
+    image: req.file.path,
     price: +req.body.price,
     UserId: req.user.id,
   };
