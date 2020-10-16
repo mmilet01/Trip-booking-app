@@ -17,7 +17,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loggingInUser = useSelector(
     (state) => state.loadingReducer.loggingInUser

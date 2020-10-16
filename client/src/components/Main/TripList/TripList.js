@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./TripList.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTrips } from "../../../actions/tripActions";
-import { Redirect, useParams, useLocation } from "react-router-dom";
 import TripCard from "../TripCard/TripCard";
 import { css } from "@emotion/core";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -26,7 +25,7 @@ const TripList = () => {
     window.scrollTo(0, 0);
     dispatch(fetchTrips());
     return () => {};
-  }, [fetchTrips]);
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setSearchTerm(e.target.value);

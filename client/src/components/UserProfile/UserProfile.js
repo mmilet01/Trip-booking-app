@@ -35,7 +35,7 @@ const UserProfile = () => {
     return () => {
       clearUser();
     };
-  }, [userID, fetchUser, fetchUserTrips]);
+  }, [userID, dispatch]);
 
   if (fetchingUserTrips || loadingUserData) {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;

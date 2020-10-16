@@ -44,7 +44,7 @@ const CreateEditTrip = () => {
     return () => {
       dispatch(clearTrip());
     };
-  }, [fetchSingleTrip, tripID]);
+  }, [dispatch, tripID]);
 
   return (
     <div className="formContainer">
@@ -56,6 +56,7 @@ const CreateEditTrip = () => {
         onSubmit={handleSubmit(submitForm)}
         encType="multipart/form-data"
       >
+        <label>Name of the trip</label>
         <input
           className="user_input"
           type="text"
@@ -64,6 +65,7 @@ const CreateEditTrip = () => {
           defaultValue={isEdit ? trip.name : ""}
           ref={register({ required: true })}
         />
+        <label>Description</label>
         <textarea
           className="text_area"
           type="text"
@@ -72,14 +74,14 @@ const CreateEditTrip = () => {
           defaultValue={isEdit ? trip.description : ""}
           ref={register({ required: true })}
         />
-        <div>
+        <div className="dates">
           <Controller
             control={control}
             name="start"
             ref={register({ required: true })}
             render={({ onChange, onBlur, value }) => (
               <ReactDatePicker
-                placeholderText="Date and time"
+                placeholderText="Start date and time"
                 onChange={onChange}
                 onBlur={onBlur}
                 selected={value}
@@ -94,7 +96,7 @@ const CreateEditTrip = () => {
             ref={register({ required: true })}
             render={({ onChange, onBlur, value }) => (
               <ReactDatePicker
-                placeholderText="Date and time"
+                placeholderText="End date and time"
                 onChange={onChange}
                 onBlur={onBlur}
                 selected={value}
@@ -130,11 +132,8 @@ const CreateEditTrip = () => {
           ref={register({ required: true })}
         />
         <label for="file-upload" className="custom-file-upload">
-          {isEdit ? (
-            <span>Select new image if you want to replace old one</span>
-          ) : (
-            <span>Select image</span>
-          )}
+          {isEdit ? <span>Edit image</span> : <span>Upload image</span>}
+          <i class="fas fa-upload"></i>
         </label>
         <input
           id="file-upload"

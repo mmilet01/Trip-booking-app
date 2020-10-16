@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Comments.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../../../actions/tripActions";

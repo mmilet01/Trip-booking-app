@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./TripDetails.css";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,7 +35,7 @@ const TripDetails = () => {
     return () => {
       dispatch(clearTrip());
     };
-  }, [fetchSingleTrip, tripID]);
+  }, [dispatch, tripID]);
 
   const deletingTrip = (e) => {
     e.preventDefault();

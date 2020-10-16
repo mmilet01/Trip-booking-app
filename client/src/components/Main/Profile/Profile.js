@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import "./Profile.css";
 import { Link } from "react-router-dom";
-import { Redirect, useParams, useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../../../actions/userActions";
 import { fetchUserTrips } from "../../../actions/tripActions";
 import TripCard from "../TripCard/TripCard.js";
 import { css } from "@emotion/core";
@@ -29,7 +28,7 @@ const Profile = () => {
     window.scrollTo(0, 0);
     if (user) dispatch(fetchUserTrips(user.id));
     return () => {};
-  }, [fetchUserTrips]);
+  }, [dispatch, user]);
 
   if (loadingUserTrips) {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;
