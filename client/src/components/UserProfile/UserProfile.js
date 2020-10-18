@@ -17,7 +17,6 @@ const UserProfile = () => {
   const fetchingUserTrips = useSelector(
     (state) => state.loadingReducer.loadingUserTrips
   );
-  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const user = useSelector((state) => state.userReducer.user);
   const fetchedUser = useSelector((state) => state.userReducer.fetchedUser);
   const trips = useSelector((state) => state.tripReducer.user_trips);
@@ -29,27 +28,15 @@ const UserProfile = () => {
   );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     dispatch(fetchUser(userID));
     dispatch(fetchUserTrips(userID));
     return () => {
-      clearUser();
+      dispatch(clearUser());
     };
   }, [userID, dispatch]);
 
   if (fetchingUserTrips || loadingUserData) {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <Redirect
-        to={{
-          pathname: "/login",
-          state: { from: location.pathname },
-        }}
-      />
-    );
   }
 
   if (user.id === userID) {

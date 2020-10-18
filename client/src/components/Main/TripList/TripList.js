@@ -22,7 +22,6 @@ const TripList = () => {
   );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     dispatch(fetchTrips());
     return () => {};
   }, [dispatch]);

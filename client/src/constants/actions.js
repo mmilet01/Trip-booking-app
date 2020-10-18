@@ -25,6 +25,7 @@ export const LOADING_USER_FAILED = "LOADING_USER_FAILED";
 
 export const CLEAR_USER = "CLEAR_USER";
 export const CLEAR_TRIP = "CLEAR_TRIP";
+export const CLEAR_TRIPS = "CLEAR_TRIPS";
 export const CLEAR_ERRORS = "CLEAR ERRORS";
 
 export const POSTING_COMMENT = "POSTING_COMMENT";

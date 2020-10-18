@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import "./Profile.css";
 import { Link } from "react-router-dom";
-import { Redirect, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserTrips } from "../../../actions/tripActions";
 import TripCard from "../TripCard/TripCard.js";
@@ -15,17 +14,14 @@ const override = css`
 `;
 
 const Profile = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
   const user_trips = useSelector((state) => state.tripReducer.user_trips);
-  const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loadingUserTrips = useSelector(
     (state) => state.loadingReducer.loadingUserTrips
   );
   const user = useSelector((state) => state.userReducer.user);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     if (user) dispatch(fetchUserTrips(user.id));
     return () => {};
   }, [dispatch, user]);
@@ -34,33 +30,10 @@ const Profile = () => {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
-  if (!isLoggedIn) {
-    return (
-      <Redirect
-        to={{
-          pathname: "/login",
-          state: { from: location.pathname },
-        }}
-      />
-    );
-  }
+  const myTrips = user_trips.map((trip) => {
+    return <TripCard key={trip.id} trip={trip} user={user}></TripCard>;
+  });
 
-  let myTrips = [];
-
-  if (isLoggedIn) {
-    myTrips = user_trips.map((trip) => {
-      return <TripCard key={trip.id} trip={trip} user={user}></TripCard>;
-    });
-
-    myTrips.push(
-      <div className="tripp" id="addCard">
-        <Link className="addCard" to="/createTrip">
-          <h4>Create another trip!</h4>
-          <i class="fas fa-plus fa-2x" />
-        </Link>
-      </div>
-    );
-  }
   return (
     <div className="profilContainer">
       <div className="profilInfo">
@@ -82,10 +55,16 @@ const Profile = () => {
         </div>
       </div>
       <div className="myTrips">
-        <div className="myTripsHeading">
-          <p>MY TRIPS</p>
+        <div className="myTripsHeading">{myTrips ? <p>MY TRIPS</p> : null}</div>
+        <div className="tripList">
+          {myTrips}
+          <div className="tripp" id="addCard">
+            <Link className="addCard" to="/createTrip">
+              <h4>Create another trip!</h4>
+              <i class="fas fa-plus fa-2x" />
+            </Link>
+          </div>
         </div>
-        <div className="tripList">{myTrips}</div>
       </div>
     </div>
   );

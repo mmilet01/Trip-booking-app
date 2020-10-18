@@ -40,9 +40,7 @@ const HomePage = () => {
       <div className="header_container">
         <img src="http://localhost:3000/images/1.jpeg" alt="" />
       </div>
-      <div className="heading">
-        <p>TOP 5 TRIPS</p>
-      </div>
+      <div className="heading">{topTrips ? <p>TOP 5 TRIPS</p> : null}</div>
       <div className="tripsContainer">
         <div className="bestTrips">{topTrips}</div>
       </div>

@@ -87,6 +87,7 @@ export default function (state = initialState, action) {
     case USER_REGISTER_FAIL:
       return {
         ...state,
+        isLoggedIn: false,
         loggingInUser: false,
       };
     case USER_LOGIN_SUCCESSFULLY:

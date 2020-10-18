@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./Login.css";
 import {
   Link,
@@ -24,7 +24,7 @@ const Login = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
   const loggingInUser = useSelector(
@@ -34,13 +34,13 @@ const Login = () => {
   useEffect(() => {
     dispatch(clearningErrors());
     return () => {};
-  }, [dispatch, clearningErrors]);
+  }, [dispatch]);
 
   const onSubmit = (data) => {
     dispatch(userLogin(data));
   };
 
-  if (history.replace.name == "replace" && isLoggedIn) {
+  if (history.replace.name === "replace" && isLoggedIn) {
     if (location.state) {
       let path = location.state.from;
       return (

@@ -30,7 +30,6 @@ const TripDetails = () => {
   );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     dispatch(fetchSingleTrip(tripID));
     return () => {
       dispatch(clearTrip());
