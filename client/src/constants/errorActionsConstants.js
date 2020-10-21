@@ -1,0 +1,2 @@
+export const CLEAR_ERRORS = "CLEAR ERRORS";
+export const DEFAULT_ERROR = "DEFAULT_ERROR";

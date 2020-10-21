@@ -5,15 +5,20 @@ import {
   LOADING_SINGLE_TRIP_FAILED,
   LOADING_TRIPS_FAILED,
   TRIPS_FETCHED_SUCCESSFULLY,
-  LOAD_USER_DATA,
   SINGLE_TRIP_FETCHED_SUCCESSFULLY,
+  LOAD_USER_TRIPS_FAILED,
+  FETCHING_USER_TRIPS_SUCCESSFULLY,
+  POSTING_COMMENT,
+  COMMENT_POSTED_SUCCESSFULLY,
+  POSTING_COMMENT_FAILED,
+} from "../constants/tripActionsConstants";
+import {
+  LOAD_USER_DATA,
   USER_FETCHED_SUCCESSFULLY,
   LOADING_USER_FAILED,
   LOADING_CURRENT_USER,
   USER_LOADED_SUCCESSFULLY,
   USER_LOADED_FAIL,
-  LOAD_USER_TRIPS_FAILED,
-  FETCHING_USER_TRIPS_SUCCESSFULLY,
   USER_LOGIN_SUCCESSFULLY,
   USER_REGISTERED_SUCCESSFULLY,
   USER_LOGOUT,
@@ -21,7 +26,7 @@ import {
   USER_REGISTER_FAIL,
   USER_LOGIN_START,
   USER_REGISTER_START,
-} from "../constants/actions";
+} from "../constants/userActionsContants";
 
 const initialState = {
   isLoggedIn: false,
@@ -31,6 +36,7 @@ const initialState = {
   loadingUserData: false,
   loadingCurrentUser: false,
   loggingInUser: false,
+  addingComment: false,
 };
 
 export default function (state = initialState, action) {
@@ -120,6 +126,17 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingUserTrips: false,
+      };
+    case POSTING_COMMENT:
+      return {
+        ...state,
+        addingComment: true,
+      };
+    case COMMENT_POSTED_SUCCESSFULLY:
+    case POSTING_COMMENT_FAILED:
+      return {
+        ...state,
+        addingComment: false,
       };
     default:
       return state;

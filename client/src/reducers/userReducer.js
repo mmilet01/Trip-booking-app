@@ -10,7 +10,7 @@ import {
   USER_FETCHED_SUCCESSFULLY,
   LOADING_USER_FAILED,
   CLEAR_USER,
-} from "../constants/actions";
+} from "../constants/userActionsContants";
 
 const initialState = {
   isLoggedIn: false,

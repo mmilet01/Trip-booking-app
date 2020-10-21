@@ -3,11 +3,22 @@ import "./Comments.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../../../actions/tripActions";
 import { useParams } from "react-router-dom";
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override = css`
+  display: block;
+  margin: 2px auto;
+  border-color: red;
+`;
 
 const Comments = () => {
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.tripReducer.comments);
   const isLoggedIn = useSelector((state) => state.loadingReducer.isLoggedIn);
+  const addingComment = useSelector(
+    (state) => state.loadingReducer.addingComment
+  );
   const [comment, setComment] = useState("");
   const tripID = +useParams().id;
 
@@ -43,15 +54,18 @@ const Comments = () => {
         <form onSubmit={onSubmit}>
           <div className="komentar">
             <textarea
-              disabled={!isLoggedIn}
               className="text_area2"
               onChange={handleChange}
               value={comment}
-              placeholder={
-                !isLoggedIn ? "Logg In To Comment" : "Write a comment..."
-              }
+              placeholder={"Write a comment..."}
             ></textarea>
-            <button className="bookNow">Submit comment</button>
+            {addingComment ? (
+              <div className="bookNow">
+                <ClipLoader css={override} size={15} color={"#123abc"} />
+              </div>
+            ) : (
+              <button className="bookNow">Add comment</button>
+            )}
           </div>
         </form>
       ) : null}

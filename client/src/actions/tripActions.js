@@ -21,7 +21,7 @@ import {
   TRIP_CREATED_SUCCESSFULLY,
   COMMENT_POSTED_SUCCESSFULLY,
   CREATING_TRIP,
-} from "../constants/actions";
+} from "../constants/tripActionsConstants";
 import axios from "axios";
 
 export const fetchTrips = () => (dispatch) => {
@@ -42,10 +42,7 @@ export const fetchTrips = () => (dispatch) => {
 };
 
 export const fetchSingleTrip = (id) => (dispatch, getState) => {
-  /*  const { state } = getState();
-  console.log(getState().tripReducer.trips);
-  problem ako korisnik bez loadanja svih tripiova dode samo na jedan koji ima bookmarkan->nece mu ga pokazat
-  */
+  /*  const { state } = getState();  */
   dispatch({ type: LOAD_SINGLE_TRIP });
   axios
     .get("/api/trips/show/" + id)

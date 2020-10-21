@@ -14,7 +14,7 @@ import {
   USER_REGISTERED_SUCCESSFULLY,
   USER_REGISTER_START,
   USER_LOGIN_START,
-} from "../constants/actions";
+} from "../constants/userActionsContants";
 import axios from "axios";
 
 export const userLoaded = () => (dispatch) => {

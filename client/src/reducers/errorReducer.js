@@ -2,7 +2,7 @@
   CURRENTLY COPY PASTED, NOT DOING ANYTHING - GONNA BE USED LATER
 */
 
-import { DEFAULT_ERROR } from "../constants/actions";
+import { DEFAULT_ERROR } from "../constants/userActionsContants";
 
 const initialState = {
   errorMsg: [],

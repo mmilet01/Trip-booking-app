@@ -45,10 +45,12 @@ const Trip = models.Trip;
 router.get("/", (req, res) => {
   Trip.findAll()
     .then((trips) => {
-      res.send(trips);
+      return res.status(200).json(trips);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "Fetching all trips failed" });
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
     });
 });
 
@@ -71,7 +73,9 @@ router.post("/", upload.single("tripImage"), auth, (req, res) => {
       return res.status(200).json(result);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "Creating Post Failed" });
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
     });
 });
 
@@ -82,16 +86,25 @@ router.get("/show/:id", (req, res) => {
       return res.status(200).json(trip);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "FAILED" });
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
     });
 });
 
 router.get("/userTrips/:id", (req, res) => {
   const id = req.params.id;
-  Trip.findAll({ where: { UserId: id } }).then((trips) => {
-    return res.status(200).json(trips);
-  });
+  Trip.findAll({ where: { UserId: id } })
+    .then((trips) => {
+      return res.status(200).json(trips);
+    })
+    .catch((err) => {
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
+    });
 });
+
 router.post("/comment/:id", auth, (req, res) => {
   const id = req.params.id;
   Trip.findOne({ where: { id: id } }).then((trip) => {
@@ -108,40 +121,40 @@ router.post("/comment/:id", auth, (req, res) => {
         res.json({ comment });
       })
       .catch((err) => {
-        return res.status(500).json({ msg: "FAILED" });
+        return res
+          .status(500)
+          .json({ msg: "Something went wrong. Please try again later." });
       });
   });
 });
 
-router.put("/edit/:id", upload.single("tripImage"), (req, res) => {
+router.put("/edit/:id", auth, upload.single("tripImage"), (req, res) => {
   const id = +req.params.id;
-  let data = ({
-    name,
-    description,
-    start_date,
-    end_date,
-    start_hour,
-    end_hour,
-    location,
-  } = req.body);
+  const data = {
+    name: req.body.name,
+    description: req.body.description,
+    location: req.body.location,
+    freespace: +req.body.space,
+    createdBy: req.user.fullname,
+    end_hour: req.body.end,
+    start_hour: req.body.start,
+    price: +req.body.price,
+    UserId: req.user.id,
+  };
   if (!!req.file) {
     data = {
       ...data,
       image: req.file.path,
     };
   }
-  let space = +req.body.space;
-  data = {
-    ...data,
-    freespace: space,
-    price: +req.body.price,
-  };
   Trip.update(data, { where: { id: id } })
     .then(() => {
-      res.status(200).send("trip updated id= " + id);
+      return res.status(200);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "FAILED" });
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
     });
 });
 
@@ -151,10 +164,12 @@ router.delete("/delete/:id", (req, res) => {
     where: { id: id },
   })
     .then(() => {
-      res.status(200).send("Deleting successfull");
+      return res.status(200);
     })
     .catch((err) => {
-      return res.status(500).json({ msg: "FAILED" });
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong. Please try again later." });
     });
 });
 

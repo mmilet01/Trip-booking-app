@@ -4,15 +4,16 @@ import { Link } from "react-router-dom";
 
 const TripCard = (props) => {
   const trip = props.trip;
-  let duration = 0;
-  let start_hour = 0;
-  let end_hour = 0;
+
+  let start = 0;
+  let end = 0;
+  let start_date;
+  let end_date;
   if (trip.start_hour) {
-    start_hour = trip.start_hour.slice(16, 21);
-    end_hour = trip.end_hour.slice(16, 21);
-    const start = start_hour.slice(0, 2);
-    const end = end_hour.slice(0, 2);
-    duration = end - start;
+    start_date = trip.start_hour.slice(0, 10);
+    end_date = trip.end_hour.slice(0, 10);
+    start = trip.start_hour.slice(12, 17);
+    end = trip.end_hour.slice(12, 17);
   }
 
   const addDefaultSrc = (e) => {
@@ -42,8 +43,8 @@ const TripCard = (props) => {
           </p>
         </div>
         <div className="infoFav">
-          <p>Start: {start_hour}</p>
-          <p>Duration: {duration}h</p>
+          <p> Start: {start_date}</p>
+          <p> End: {end_date}</p>
         </div>
       </div>
       <div className="info2">

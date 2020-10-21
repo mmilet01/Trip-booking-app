@@ -50,15 +50,11 @@ const TripDetails = () => {
     return <ClipLoader css={override} size={150} color={"#123abc"} />;
   }
 
-  let duration = 0;
-  let start_hour = 0;
-  let end_hour = 0;
+  let startDate;
+  let endDate;
   if (trip.start_hour) {
-    start_hour = trip.start_hour.slice(16, 21);
-    end_hour = trip.end_hour.slice(16, 21);
-    const start = start_hour.slice(0, 2);
-    const end = end_hour.slice(0, 2);
-    duration = end - start;
+    startDate = new Date(trip.start_hour);
+    endDate = new Date(trip.end_hour);
   }
   return (
     <div className="tripDetailsContainer">
@@ -77,7 +73,12 @@ const TripDetails = () => {
           </div>
           <div className="faDiv">
             <i className="fas fa-hourglass-start fa-2x" />
-            <p>{duration} hours</p>
+            <p>
+              {startDate && startDate.getHours()}:
+              {startDate ? ("0" + startDate.getMinutes()).slice(-2) : null}h -
+              {endDate && ("0" + endDate.getHours()).slice(-2)}:
+              {endDate ? ("0" + endDate.getMinutes()).slice(-2) : null}h
+            </p>
           </div>
         </div>
         <div className="secondRow">
@@ -95,8 +96,17 @@ const TripDetails = () => {
           <div className="faDiv">
             <i className="far fa-calendar-alt fa-2x" />
             <div>
-              <p> Start: {start_hour}h</p>
-              <p> End: {end_hour}h</p>
+              <p>
+                Start: {startDate && startDate.getDate()}/
+                {startDate && startDate.getMonth() + 1}/
+                {startDate && startDate.getFullYear()}
+              </p>
+              <p>
+                {" "}
+                End: {endDate && endDate.getDate()}/
+                {endDate && endDate.getMonth() + 1}/
+                {endDate && endDate.getFullYear()}
+              </p>
             </div>
           </div>
           <div className="faDiv">

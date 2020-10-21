@@ -6,7 +6,7 @@ import {
   CLEAR_TRIP,
   COMMENT_POSTED_SUCCESSFULLY,
   FETCHING_USER_TRIPS_SUCCESSFULLY,
-} from "../constants/actions";
+} from "../constants/tripActionsConstants";
 
 const initialState = {
   trips: [],
