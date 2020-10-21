@@ -1,14 +1,14 @@
 import axios from "axios";
 
 export default {
-  ConfigureErrorHandling() {
+  UseInterceptors() {
     axios.interceptors.request.use((req) => {
       req.headers.Authorization = "Bearer " + localStorage.getItem("token");
       // Important: request interceptors **must** return the request
-      return new Promise((resolve) => setTimeout(() => resolve(req), 1000));
+      return new Promise((resolve) => setTimeout(() => resolve(req), 100));
     });
 
-    // Add a response interceptor to check errors?
+    // Possibility to a response interceptor to check errors
     axios.interceptors.response.use((res) => {
       return res;
     });

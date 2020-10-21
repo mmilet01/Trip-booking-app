@@ -1,22 +1,27 @@
-/*
-  CURRENTLY COPY PASTED, NOT DOING ANYTHING - GONNA BE USED LATER
-*/
-
-import { DEFAULT_ERROR } from "../constants/userActionsContants";
+import {
+  DEFAULT_ERROR,
+  USER_REGISTER_FAIL,
+  USER_LOGIN_FAIL,
+} from "../constants/userActionsContants";
 
 const initialState = {
-  errorMsg: [],
+  loginRegisterErrorMsg: "",
+  defaultErrorMsg: "",
   statusCode: "",
-  isFetching: true,
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
     case DEFAULT_ERROR:
       return {
-        errorMsg: [],
+        defaultErrorMsg: "Error occured, try again later",
         statusCode: "",
-        isFetching: true,
+      };
+    case USER_REGISTER_FAIL:
+    case USER_LOGIN_FAIL:
+      return {
+        loginRegisterErrorMsg: action.payload,
+        statusCode: "",
       };
     default:
       return state;

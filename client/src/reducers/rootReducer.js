@@ -8,6 +8,7 @@ const rootReducer = combineReducers({
   tripReducer,
   userReducer,
   loadingReducer,
+  errorReducer,
 });
 
 export default rootReducer;

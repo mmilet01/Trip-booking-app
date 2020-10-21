@@ -7,7 +7,7 @@ import interceptors from "./axiosInterceptors";
 import { Provider } from "react-redux";
 import store from "./store/store";
 
-interceptors.ConfigureErrorHandling();
+interceptors.UseInterceptors();
 
 ReactDOM.render(
   <Provider store={store}>

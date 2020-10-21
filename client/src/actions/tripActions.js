@@ -94,10 +94,9 @@ export const deleteTrip = (id, history) => (dispatch) => {
   dispatch({ type: DELETING_TRIP });
   axios
     .delete("/api/trips/delete/" + id)
-    .then((res) => {
+    .then(() => {
       dispatch({
         type: TRIP_DELETED_SUCCESSFULLY,
-        payload: id,
       });
       history.push("/profile");
     })

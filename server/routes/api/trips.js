@@ -118,7 +118,7 @@ router.post("/comment/:id", auth, (req, res) => {
 
     Trip.update(trip.dataValues, { where: { id: id } })
       .then((updatedTrip) => {
-        res.json({ comment });
+        return res.json({ comment });
       })
       .catch((err) => {
         return res
@@ -149,7 +149,7 @@ router.put("/edit/:id", auth, upload.single("tripImage"), (req, res) => {
   }
   Trip.update(data, { where: { id: id } })
     .then(() => {
-      return res.status(200);
+      return res.status(200).json();
     })
     .catch((err) => {
       return res
@@ -164,7 +164,7 @@ router.delete("/delete/:id", (req, res) => {
     where: { id: id },
   })
     .then(() => {
-      return res.status(200);
+      return res.status(200).json();
     })
     .catch((err) => {
       return res

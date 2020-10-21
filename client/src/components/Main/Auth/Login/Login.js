@@ -30,6 +30,9 @@ const Login = () => {
   const loggingInUser = useSelector(
     (state) => state.loadingReducer.loggingInUser
   );
+  const loginRegisterError = useSelector(
+    (state) => state.errorReducer.loginRegisterErrorMsg
+  );
 
   useEffect(() => {
     dispatch(clearningErrors());
@@ -87,6 +90,9 @@ const Login = () => {
               type="password"
               ref={register({ required: true })}
             />
+            {loginRegisterError ? (
+              <p style={{ color: "red" }}>{loginRegisterError}</p>
+            ) : null}
             {errors.email?.type === "required" && (
               <p style={{ color: "red" }}>Enter email</p>
             )}
