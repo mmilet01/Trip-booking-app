@@ -4,14 +4,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserTrips } from "../../../actions/tripActions";
 import TripCard from "../TripCard/TripCard.js";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -27,7 +20,7 @@ const Profile = () => {
   }, [dispatch, user]);
 
   if (loadingUserTrips) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"} />;
   }
 
   const myTrips = user_trips.map((trip) => {

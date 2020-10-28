@@ -12,17 +12,10 @@ import TripDetails from "./components/Main/TripDetails/TripDetails";
 import CreateEditTrip from "./components/Main/CreateEditTrip/CreateEditTrip";
 import UserProfile from "./components/UserProfile/UserProfile";
 import { userLoaded } from "./actions/userActions";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useSelector, useDispatch } from "react-redux";
 import ScrollToTop from "./components/HOC/ScrollToTop";
 import RequireAuth from "./components/HOC/RequireAuth";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "./components/LoadingComponent/LoadingComponent";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -36,7 +29,7 @@ const App = () => {
   }, [dispatch]);
 
   if (loadingCurrentUser) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"}></LoadingComponent>;
   }
 
   return (

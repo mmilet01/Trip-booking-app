@@ -4,14 +4,7 @@ import { fetchUser, clearUser } from "../../actions/userActions";
 import { fetchUserTrips } from "../../actions/tripActions";
 import { Redirect, useParams, useLocation } from "react-router-dom";
 import TripCard from "../Main/TripCard/TripCard";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
 const UserProfile = () => {
   const fetchingUserTrips = useSelector(
@@ -36,7 +29,7 @@ const UserProfile = () => {
   }, [userID, dispatch]);
 
   if (fetchingUserTrips || loadingUserData) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"} />;
   }
 
   if (user.id === userID) {

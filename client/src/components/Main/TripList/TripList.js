@@ -3,14 +3,7 @@ import "./TripList.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTrips } from "../../../actions/tripActions";
 import TripCard from "../TripCard/TripCard";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 const TripList = () => {
   const dispatch = useDispatch();
@@ -31,7 +24,7 @@ const TripList = () => {
   };
 
   if (loadingTrips) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"} />;
   }
 
   let filteredTrips = trips

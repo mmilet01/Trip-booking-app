@@ -9,14 +9,7 @@ import {
   clearTrip,
 } from "../../../actions/tripActions";
 import Comments from "./Comments/Comments.js";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 const TripDetails = () => {
   const tripID = +useParams().id;
@@ -47,7 +40,7 @@ const TripDetails = () => {
   };
 
   if (loadingSingleTrip) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"} />;
   }
 
   let startDate;

@@ -3,14 +3,7 @@ import "./HomePage.css";
 import TripCard from "../TripCard/TripCard";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTrips } from "../../../actions/tripActions";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 const HomePage = () => {
   const trips = useSelector((state) => state.tripReducer.trips);
@@ -25,8 +18,7 @@ const HomePage = () => {
     return () => {};
   }, [dispatch]);
 
-  if (loadingTrips)
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+  if (loadingTrips) return <LoadingComponent size={150} color={"#123abc"} />;
 
   let sortedTrips = trips.sort((a, b) => {
     return b.comments.length - a.comments.length;

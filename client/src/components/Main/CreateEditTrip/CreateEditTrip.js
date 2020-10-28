@@ -11,15 +11,8 @@ import { useSelector, useDispatch } from "react-redux";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller } from "react-hook-form";
-import { css } from "@emotion/core";
-import ClipLoader from "react-spinners/ClipLoader";
 import { ErrorMessage } from "@hookform/error-message";
-
-const override = css`
-  display: block;
-  margin: 10% auto;
-  border-color: red;
-`;
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 const CreateEditTrip = () => {
   const dispatch = useDispatch();
@@ -43,7 +36,7 @@ const CreateEditTrip = () => {
   }, [dispatch, tripID]);
 
   if (loadingSingleTrip) {
-    return <ClipLoader css={override} size={150} color={"#123abc"} />;
+    return <LoadingComponent size={150} color={"#123abc"} />;
   }
 
   const submitForm = (values) => {
